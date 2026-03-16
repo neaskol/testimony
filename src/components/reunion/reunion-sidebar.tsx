@@ -1,0 +1,152 @@
+"use client";
+
+import { CheckCircle2, Circle, SkipForward } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import type { ReunionTestimony } from "@/lib/types";
+
+interface ReunionSidebarProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  testimonies: ReunionTestimony[];
+  currentIndex: number;
+  isDarkMode: boolean;
+  onJumpTo: (index: number) => void;
+  readCount: number;
+  total: number;
+}
+
+function StatusIcon({
+  status,
+  isDarkMode,
+}: {
+  status: ReunionTestimony["status"];
+  isDarkMode: boolean;
+}) {
+  switch (status) {
+    case "read":
+      return (
+        <CheckCircle2
+          className={`size-4 shrink-0 ${
+            isDarkMode ? "text-green-400" : "text-green-600"
+          }`}
+        />
+      );
+    case "skipped":
+      return (
+        <SkipForward
+          className={`size-4 shrink-0 ${
+            isDarkMode ? "text-yellow-400" : "text-yellow-600"
+          }`}
+        />
+      );
+    default:
+      return (
+        <Circle
+          className={`size-4 shrink-0 ${
+            isDarkMode ? "text-reunion-fg/30" : "text-[#E2E8F0]"
+          }`}
+        />
+      );
+  }
+}
+
+export function ReunionSidebar({
+  open,
+  onOpenChange,
+  testimonies,
+  currentIndex,
+  isDarkMode,
+  onJumpTo,
+  readCount,
+  total,
+}: ReunionSidebarProps) {
+  function handleJump(index: number) {
+    onJumpTo(index);
+    onOpenChange(false);
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="left"
+        className={
+          isDarkMode
+            ? "border-white/10 bg-reunion-bg text-reunion-fg"
+            : "bg-white"
+        }
+      >
+        <SheetHeader>
+          <SheetTitle
+            className={isDarkMode ? "text-reunion-fg" : ""}
+          >
+            Témoignages
+          </SheetTitle>
+          <SheetDescription
+            className={isDarkMode ? "text-reunion-fg/60" : ""}
+          >
+            {readCount} sur {total} lu{readCount !== 1 ? "s" : ""}
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="flex-1 overflow-y-auto px-4 pb-4">
+          <ul className="space-y-1">
+            {testimonies.map((testimony, index) => {
+              const isCurrent = index === currentIndex;
+
+              return (
+                <li key={testimony.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleJump(index)}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-colors ${
+                      isCurrent
+                        ? isDarkMode
+                          ? "bg-white/10 ring-1 ring-[#B8860B]"
+                          : "bg-[#B8860B]/5 ring-1 ring-[#B8860B]"
+                        : isDarkMode
+                          ? "hover:bg-white/5"
+                          : "hover:bg-muted/50"
+                    }`}
+                  >
+                    <span
+                      className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
+                        isCurrent
+                          ? "bg-[#B8860B] text-white"
+                          : isDarkMode
+                            ? "bg-white/10 text-reunion-fg/70"
+                            : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {index + 1}
+                    </span>
+
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className={`text-sm font-medium truncate ${
+                          isDarkMode ? "text-reunion-fg" : "text-[#0A0A0A]"
+                        }`}
+                      >
+                        {testimony.witnessName}
+                      </p>
+                    </div>
+
+                    <StatusIcon
+                      status={testimony.status}
+                      isDarkMode={isDarkMode}
+                    />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}

@@ -2,9 +2,9 @@
 
 ## Vue d'ensemble
 
-Application web de gestion de témoignages pour une église. Permet aux pasteurs (admins) de collecter, organiser et planifier la lecture publique de témoignages lors des cultes, avec l'aide de traducteurs assignés.
+Application web de gestion de témoignages pour une église. Permet aux pasteurs (admins) de collecter, organiser et planifier la lecture publique de témoignages lors des réunions, avec l'aide de traducteurs assignés.
 
-**Fonctionnalité critique** : le Mode Culte — interface mobile optimisée pour la lecture publique en temps réel pendant un service religieux.
+**Fonctionnalité critique** : le Mode Réunion — interface mobile optimisée pour la lecture publique en temps réel pendant un service religieux.
 
 ---
 
@@ -33,10 +33,10 @@ Application web de gestion de témoignages pour une église. Permet aux pasteurs
 
 **Pourquoi** : sécurité renforcée, logique centralisée, testabilité, pas de fuite de clés API côté client.
 
-### 2. Mode Culte : localStorage + state local
-- Position de scroll sauvegardée dans `localStorage` (clé : `culte_scroll_[plan_id]`)
+### 2. Mode Réunion : localStorage + state local
+- Position de scroll sauvegardée dans `localStorage` (clé : `reunion_scroll_[plan_id]`)
 - Progression (index courant, statuts) en state React local
-- Marquage "Lu" via Server Action uniquement au passage au témoignage suivant en mode culte actif
+- Marquage "Lu" via Server Action uniquement au passage au témoignage suivant en mode réunion actif
 - Page Visibility API pour restaurer la position après veille du téléphone
 - Pas de Supabase Realtime (overkill pour un seul lecteur actif)
 
@@ -178,7 +178,7 @@ CREATE TABLE public.assignments (
 CREATE INDEX idx_assignments_translator_id ON public.assignments(translator_id);
 ```
 
-### Table `services` (Fiches Culte)
+### Table `services` (Fiches Réunion)
 
 ```sql
 CREATE TABLE public.services (
@@ -606,12 +606,12 @@ CREATE POLICY "admin_delete" ON storage.objects
 | CRUD témoignages                | oui        | oui (les siens)    | lecture seule        |
 | Partager un témoignage          | oui        | oui                | non                 |
 | CRUD traductions                | oui        | lecture seule      | oui (les siennes)   |
-| CRUD fiches culte (services)    | oui        | oui (les siens)    | lecture seule        |
+| CRUD fiches réunion (services)  | oui        | oui (les siens)    | lecture seule        |
 | CRUD plannings                  | oui        | oui (les siens)    | lecture seule        |
 | Assigner témoignage→traducteur  | oui        | oui                | non                 |
 | Assigner traducteur→planning    | oui        | oui                | non                 |
-| Démarrer Mode Culte             | oui        | oui                | oui (si assigné)    |
-| Marquer lu/ignoré (Mode Culte)  | oui        | oui                | oui (si assigné)    |
+| Démarrer Mode Réunion           | oui        | oui                | oui (si assigné)    |
+| Marquer lu/ignoré (Mode Réunion)| oui        | oui                | oui (si assigné)    |
 | Upload audio                    | oui        | oui                | non                 |
 | Transcrire audio (Whisper)      | oui        | oui                | non                 |
 
@@ -640,9 +640,9 @@ testimony/
 │   │   │   ├── dashboard/
 │   │   │   │   └── page.tsx
 │   │   │   ├── services/
-│   │   │   │   ├── page.tsx      # Liste des fiches culte
+│   │   │   │   ├── page.tsx      # Liste des fiches réunion
 │   │   │   │   └── new/
-│   │   │   │       └── page.tsx  # Créer une fiche culte
+│   │   │   │       └── page.tsx  # Créer une fiche réunion
 │   │   │   ├── witnesses/
 │   │   │   │   ├── page.tsx      # Liste des témoins
 │   │   │   │   └── [id]/
@@ -672,15 +672,15 @@ testimony/
 │   │           ├── page.tsx      # Mes plannings
 │   │           └── [id]/
 │   │               ├── page.tsx  # Vue planning (préparation)
-│   │               └── culte/
-│   │                   └── page.tsx  # MODE CULTE
+│   │               └── reunion/
+│   │                   └── page.tsx  # MODE RÉUNION
 │   │
 │   ├── actions/                  # Server Actions
 │   │   ├── auth.ts               # Login, invite, role check
 │   │   ├── witnesses.ts          # CRUD témoins
 │   │   ├── testimonies.ts        # CRUD témoignages + filtres
 │   │   ├── translations.ts       # CRUD traductions (autosave)
-│   │   ├── services.ts           # CRUD fiches culte
+│   │   ├── services.ts           # CRUD fiches réunion
 │   │   ├── plans.ts              # CRUD plannings + assignments
 │   │   ├── reading.ts            # Marquer lu/ignoré, historique
 │   │   ├── sharing.ts            # Partage inter-admins
@@ -697,7 +697,7 @@ testimony/
 │   │
 │   ├── hooks/
 │   │   ├── use-auth.ts           # Hook auth (session, rôle, profil)
-│   │   ├── use-culte-mode.ts     # Hook Mode Culte (scroll, progression)
+│   │   ├── use-reunion-mode.ts   # Hook Mode Réunion (scroll, progression)
 │   │   └── use-autosave.ts       # Hook autosave pour traductions
 │   │
 │   ├── components/
@@ -724,12 +724,12 @@ testimony/
 │   │   │   └── plan-card.tsx
 │   │   ├── translations/
 │   │   │   └── translation-editor.tsx  # Éditeur avec autosave
-│   │   └── culte/
-│   │       ├── culte-view.tsx          # Vue principale Mode Culte
-│   │       ├── culte-header.tsx        # En-tête avec infos culte
-│   │       ├── culte-navigation.tsx    # Barre fixe bas + progression
-│   │       ├── culte-sidebar.tsx       # Liste latérale des témoignages
-│   │       └── culte-testimony.tsx     # Affichage d'un témoignage en lecture
+│   │   └── reunion/
+│   │       ├── reunion-view.tsx          # Vue principale Mode Réunion
+│   │       ├── reunion-header.tsx        # En-tête avec infos réunion
+│   │       ├── reunion-navigation.tsx    # Barre fixe bas + progression
+│   │       ├── reunion-sidebar.tsx       # Liste latérale des témoignages
+│   │       └── reunion-testimony.tsx     # Affichage d'un témoignage en lecture
 │   │
 │   └── middleware.ts             # Auth + routage par rôle
 │
@@ -744,7 +744,7 @@ testimony/
 ### Typographie
 - **Titres (h1-h3)** : Playfair Display (serif), weight 600-700
 - **Corps / UI** : Inter (sans-serif), weight 400-500
-- **Mode Culte texte** : Inter, min 18px, line-height 1.75
+- **Mode Réunion texte** : Inter, min 18px, line-height 1.75
 
 ### Palette de couleurs
 
@@ -762,8 +762,8 @@ testimony/
 | Info            | `#2563EB`   | Badge "Reçu"                       |
 | Prévu           | `#7C3AED`   | Badge "Planifié"                   |
 | Danger          | `#DC2626`   | Suppression, erreurs               |
-| Fond sombre     | `#0F172A`   | Mode Culte (fond sombre)           |
-| Texte sombre    | `#F1F5F9`   | Mode Culte (texte sur fond sombre) |
+| Fond sombre     | `#0F172A`   | Mode Réunion (fond sombre)         |
+| Texte sombre    | `#F1F5F9`   | Mode Réunion (texte sur fond sombre)|
 
 ### Badges de statut témoignage
 
@@ -788,7 +788,7 @@ testimony/
 ### Composants shadcn/ui à utiliser
 - `Button`, `Input`, `Textarea`, `Label`, `Select`
 - `Card`, `Badge`, `Avatar`
-- `Dialog`, `Sheet` (pour la sidebar Mode Culte)
+- `Dialog`, `Sheet` (pour la sidebar Mode Réunion)
 - `Table` (listes admin)
 - `Tabs`, `DropdownMenu`
 - `Toast` (notifications)
@@ -797,25 +797,25 @@ testimony/
 
 ---
 
-## Mode Culte — Spécifications détaillées
+## Mode Réunion — Spécifications détaillées
 
 ### Démarrage
 1. Le traducteur (ou admin) va sur `/translator/plans/[id]` (ou `/admin/plans/[id]`)
 2. Il voit le planning avec tous les témoignages dans l'ordre
-3. Bouton "Démarrer la lecture" → navigation vers `/translator/plans/[id]/culte`
-4. L'URL `/culte` active le mode plein écran (navbar masquée)
+3. Bouton "Démarrer la lecture" → navigation vers `/translator/plans/[id]/reunion`
+4. L'URL `/reunion` active le mode plein écran (navbar masquée)
 
-### État local (hook `use-culte-mode`)
+### État local (hook `use-reunion-mode`)
 ```typescript
-interface CulteState {
+interface ReunionState {
   planId: string;
   currentIndex: number;
-  testimonies: CulteTestimony[];
+  testimonies: ReunionTestimony[];
   isDarkMode: boolean;
-  isActive: boolean; // true = mode culte démarré
+  isActive: boolean; // true = mode réunion démarré
 }
 
-interface CulteTestimony {
+interface ReunionTestimony {
   id: string;
   witnessName: string;
   content: string;
@@ -835,7 +835,7 @@ interface CulteTestimony {
 // Sauvegarde continue
 const saveScrollPosition = () => {
   localStorage.setItem(
-    `culte_scroll_${planId}`,
+    `reunion_scroll_${planId}`,
     JSON.stringify({ index: currentIndex, scrollY: window.scrollY })
   );
 };
@@ -843,7 +843,7 @@ const saveScrollPosition = () => {
 // Restauration (Page Visibility API)
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
-    const saved = localStorage.getItem(`culte_scroll_${planId}`);
+    const saved = localStorage.getItem(`reunion_scroll_${planId}`);
     if (saved) {
       const { index, scrollY } = JSON.parse(saved);
       setCurrentIndex(index);
@@ -855,13 +855,13 @@ document.addEventListener('visibilitychange', () => {
 
 ### Marquage lu (CRITIQUE)
 - Ouvrir un témoignage en mode préparation (`/translator/testimonies/[id]`) ne marque RIEN
-- Seul le passage au suivant EN MODE CULTE ACTIF (`isActive === true`) déclenche :
+- Seul le passage au suivant EN MODE RÉUNION ACTIF (`isActive === true`) déclenche :
   1. Server Action `markAsRead(testimonyId, serviceId, planId)`
   2. Insert dans `reading_occasions`
   3. Update du statut du témoignage vers `'read'` (si pas déjà `'read'`)
   4. Update du state local
 
-### En-tête Mode Culte
+### En-tête Mode Réunion
 ```
 ┌─────────────────────────────────────────┐
 │  Titre : La foi qui déplace les monts   │
@@ -874,7 +874,7 @@ document.addEventListener('visibilitychange', () => {
 ### Mode sombre (toggle)
 - `isDarkMode` en state local + `localStorage`
 - Fond : `#0F172A`, texte : `#F1F5F9`
-- Toggle accessible dans l'en-tête du mode culte
+- Toggle accessible dans l'en-tête du mode réunion
 
 ---
 
@@ -915,7 +915,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 11. CRUD Témoignages (`testimonies`) — liste avec filtres, création (texte + audio), détail
 12. Upload audio vers Supabase Storage
 13. Transcription Whisper (optionnel)
-14. CRUD Fiches culte (`services`)
+14. CRUD Fiches réunion (`services`)
 15. Gestion des traducteurs (invitation, liste)
 16. Assignation témoignage → traducteur
 
@@ -930,13 +930,13 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 22. Partage inter-admins de témoignages
 23. Dashboard admin (stats, plannings à venir, témoignages en attente)
 
-### Phase 6 — Mode Culte
-24. Page `/translator/plans/[id]/culte` (et équivalent admin)
-25. Hook `use-culte-mode` (state, scroll, Page Visibility API)
+### Phase 6 — Mode Réunion
+24. Page `/translator/plans/[id]/reunion` (et équivalent admin)
+25. Hook `use-reunion-mode` (state, scroll, Page Visibility API)
 26. UI mobile-first (texte large, boutons larges, plein écran)
 27. Navigation : barre fixe bas, progression, sidebar
 28. Marquage lu/ignoré via Server Action
-29. En-tête avec infos culte
+29. En-tête avec infos réunion
 30. Mode sombre (toggle)
 31. Tests manuels intensifs sur mobile
 
