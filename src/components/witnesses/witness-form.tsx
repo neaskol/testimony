@@ -23,6 +23,7 @@ interface WitnessFormProps {
   witness?: Witness;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   action: (formData: FormData) => Promise<ActionResult<any>>;
+  onSuccess?: () => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -55,7 +56,7 @@ const COLOR_DOT: Record<string, string> = {
 // Component
 // ---------------------------------------------------------------------------
 
-export function WitnessForm({ witness, action }: WitnessFormProps) {
+export function WitnessForm({ witness, action, onSuccess }: WitnessFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +83,9 @@ export function WitnessForm({ witness, action }: WitnessFormProps) {
       const result = await action(formData);
       if (result.error) {
         setError(result.error);
+      } else if (onSuccess) {
+        onSuccess();
+        router.refresh();
       } else {
         router.push("/admin/witnesses");
       }

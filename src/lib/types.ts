@@ -164,6 +164,32 @@ export interface ReunionState {
 }
 
 // ============================================================
+// Witness detail types
+// ============================================================
+
+export interface WitnessTestimonyWithReading {
+  id: string;
+  content: string | null;
+  summary: string | null;
+  source_language: LanguageCode;
+  status: TestimonyStatus;
+  created_at: string;
+  reading_occasions: {
+    id: string;
+    status: ReadingStatus;
+    read_at: string;
+    service: Pick<Service, "id" | "title" | "service_date"> | null;
+  }[];
+}
+
+export interface WitnessStats {
+  total: number;
+  read: number;
+  pending: number;
+  lastTestimonyDate: string | null;
+}
+
+// ============================================================
 // Server Action return types
 // ============================================================
 

@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/actions/auth";
-import type { ActionResult, Witness } from "@/lib/types";
+import type { ActionResult, Witness, WitnessTestimonyWithReading, WitnessStats } from "@/lib/types";
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -118,6 +118,57 @@ export async function getWitness(id: string): Promise<ActionResult<Witness>> {
   }
 
   return { data: data as Witness, error: null };
+}
+
+// ---------------------------------------------------------------------------
+// Witness testimonies with reading history
+// ---------------------------------------------------------------------------
+
+export async function getWitnessTestimonies(
+  witnessId: string
+): Promise<
+  ActionResult<{ testimonies: WitnessTestimonyWithReading[]; stats: WitnessStats }>
+> {
+  const profileResult = await requireRole(["superadmin", "admin"]);
+  if (profileResult.error) return { data: null, error: profileResult.error };
+
+  const profile = profileResult.data!;
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("testimonies")
+    .select(
+      "id, content, summary, source_language, status, created_at, reading_occasions(id, status, read_at, service:services(id, title, service_date))"
+    )
+    .eq("witness_id", witnessId)
+    .order("created_at", { ascending: false });
+
+  if (profile.role !== "superadmin") {
+    query = query.eq("owned_by", profile.id);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return { data: null, error: error.message };
+  }
+
+  const testimonies = (data ?? []) as unknown as WitnessTestimonyWithReading[];
+
+  const total = testimonies.length;
+  const read = testimonies.filter((t) => t.status === "read").length;
+  const pending = testimonies.filter(
+    (t) => t.status === "received" || t.status === "in_translation"
+  ).length;
+  const lastTestimonyDate = testimonies.length > 0 ? testimonies[0].created_at : null;
+
+  return {
+    data: {
+      testimonies,
+      stats: { total, read, pending, lastTestimonyDate },
+    },
+    error: null,
+  };
 }
 
 // ---------------------------------------------------------------------------
