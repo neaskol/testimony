@@ -27,6 +27,7 @@ const createTestimonySchema = z.object({
 
 const updateTestimonySchema = z.object({
   witness_id: z.string().uuid().optional(),
+  witness_name: z.string().optional(),
   content: z.string().min(1, "Le contenu est requis"),
   source_language: z.enum(["mg", "fr"]),
   tags: z.string().optional(),
@@ -230,8 +231,11 @@ export async function updateTestimony(
   const profileResult = await requireRole(["superadmin", "admin"]);
   if (profileResult.error) return { data: null, error: profileResult.error };
 
+  const profile = profileResult.data!;
+
   const raw = {
     witness_id: formData.get("witness_id") as string | null,
+    witness_name: formData.get("witness_name") as string | null,
     content: formData.get("content") as string,
     source_language: formData.get("source_language") as string,
     tags: formData.get("tags") as string | null,
@@ -241,6 +245,7 @@ export async function updateTestimony(
   const parsed = updateTestimonySchema.safeParse({
     ...raw,
     witness_id: raw.witness_id || undefined,
+    witness_name: raw.witness_name || undefined,
     tags: raw.tags || undefined,
     private_notes: raw.private_notes || undefined,
   });
@@ -250,8 +255,48 @@ export async function updateTestimony(
     return { data: null, error: firstError.message };
   }
 
-  const { witness_id, content, source_language, tags, private_notes } =
+  const { witness_id, witness_name, content, source_language, tags, private_notes } =
     parsed.data;
+
+  const supabase = await createClient();
+
+  // Resolve witness: use existing ID, or search/create from name
+  let resolvedWitnessId: string | null = witness_id ?? null;
+
+  if (!resolvedWitnessId && witness_name?.trim()) {
+    const trimmedName = witness_name.trim();
+
+    let findQuery = supabase
+      .from("witnesses")
+      .select("id")
+      .ilike("full_name", trimmedName)
+      .limit(1);
+
+    if (profile.role !== "superadmin") {
+      findQuery = findQuery.eq("created_by", profile.id);
+    }
+
+    const { data: existing } = await findQuery;
+
+    if (existing && existing.length > 0) {
+      resolvedWitnessId = existing[0].id;
+    } else {
+      const { data: newWitness, error: witnessError } = await supabase
+        .from("witnesses")
+        .insert({
+          created_by: profile.id,
+          full_name: trimmedName,
+          language_preference: source_language,
+        })
+        .select("id")
+        .single();
+
+      if (witnessError) {
+        return { data: null, error: `Impossible de créer le témoin : ${witnessError.message}` };
+      }
+      resolvedWitnessId = newWitness.id;
+    }
+  }
 
   const tagsArray = tags
     ? tags
@@ -260,12 +305,10 @@ export async function updateTestimony(
         .filter(Boolean)
     : [];
 
-  const supabase = await createClient();
-
   const { error } = await supabase
     .from("testimonies")
     .update({
-      witness_id: witness_id ?? null,
+      witness_id: resolvedWitnessId,
       content,
       source_language,
       tags: tagsArray,
