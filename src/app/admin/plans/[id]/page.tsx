@@ -6,11 +6,13 @@ import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/testimonies/status-badge";
 import { getCurrentProfile, getMyTranslators } from "@/actions/auth";
 import { getPlan } from "@/actions/plans";
+import { getTestimonies } from "@/actions/testimonies";
 import { formatDate } from "@/lib/utils";
 import {
   DeletePlanButton,
   TranslatorAssignment,
 } from "@/components/plans/plan-detail-actions";
+import { PlanTestimonyManager } from "@/components/plans/plan-testimony-manager";
 
 interface PlanDetailPageProps {
   params: Promise<{ id: string }>;
@@ -29,6 +31,9 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
 
   // Get all available translators for assignment
   const { data: allTranslators } = await getMyTranslators();
+
+  // Get all testimonies for the testimony manager
+  const { data: allTestimonies } = await getTestimonies();
 
   return (
     <div className="space-y-8">
@@ -98,9 +103,17 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
 
       {/* Testimony list */}
       <section className="space-y-4">
-        <h2 className="font-serif text-lg font-semibold">
-          Témoignages ({testimonies.length})
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-serif text-lg font-semibold">
+            Témoignages ({testimonies.length})
+          </h2>
+          <PlanTestimonyManager
+            planId={id}
+            currentTestimonyIds={plan.testimony_ids}
+            currentTestimonies={testimonies}
+            allTestimonies={allTestimonies ?? []}
+          />
+        </div>
 
         {testimonies.length === 0 ? (
           <p className="text-sm text-muted-foreground">
