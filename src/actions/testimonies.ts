@@ -322,6 +322,7 @@ export async function updateTestimony(
 
   revalidatePath("/admin/testimonies");
   revalidatePath(`/admin/testimonies/${id}`);
+  revalidatePath("/admin/witnesses");
   return { data: undefined, error: null };
 }
 

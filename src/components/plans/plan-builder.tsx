@@ -141,7 +141,7 @@ export function PlanBuilder({
             <SelectContent>
               {services.map((service) => (
                 <SelectItem key={service.id} value={service.id}>
-                  {service.title} — {formatDate(service.service_date)}
+                  {formatDate(service.service_date)} — {service.title}
                 </SelectItem>
               ))}
             </SelectContent>

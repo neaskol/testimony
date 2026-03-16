@@ -27,7 +27,9 @@ import { Loader2Icon, UserIcon } from "lucide-react";
 
 interface TestimonyFormProps {
   witnesses: Pick<Witness, "id" | "full_name">[];
-  testimony?: Testimony;
+  testimony?: Testimony & {
+    witness?: { id: string; full_name: string } | null;
+  };
   mode: "create" | "edit";
 }
 
@@ -43,7 +45,9 @@ export function TestimonyForm({
   );
 
   // Witness autocomplete state
-  const [witnessName, setWitnessName] = useState("");
+  const [witnessName, setWitnessName] = useState(
+    testimony?.witness?.full_name ?? ""
+  );
   const [witnessId, setWitnessId] = useState(testimony?.witness_id ?? "");
   const [suggestions, setSuggestions] = useState<
     Pick<Witness, "id" | "full_name">[]
@@ -56,11 +60,18 @@ export function TestimonyForm({
 
   // Initialize witness name from existing testimony
   useEffect(() => {
-    if (testimony?.witness_id) {
+    if (testimony?.witness) {
+      // Use the joined witness data directly (most reliable)
+      setWitnessName(testimony.witness.full_name);
+      setWitnessId(testimony.witness.id);
+    } else if (testimony?.witness_id) {
       const found = witnesses.find((w) => w.id === testimony.witness_id);
-      if (found) setWitnessName(found.full_name);
+      if (found) {
+        setWitnessName(found.full_name);
+        setWitnessId(found.id);
+      }
     }
-  }, [testimony?.witness_id, witnesses]);
+  }, [testimony?.witness, testimony?.witness_id, witnesses]);
 
   // Close suggestions on click outside
   useEffect(() => {
