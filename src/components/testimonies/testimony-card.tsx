@@ -3,7 +3,7 @@ import type { TestimonyWithWitness } from "@/lib/types";
 import { formatRelative } from "@/lib/utils";
 import { StatusBadge } from "@/components/testimonies/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GlobeIcon, SparklesIcon } from "lucide-react";
+import { GlobeIcon } from "lucide-react";
 
 const LANGUAGE_LABELS: Record<string, string> = {
   fr: "Français",
@@ -16,7 +16,6 @@ interface TestimonyCardProps {
 
 export function TestimonyCard({ testimony }: TestimonyCardProps) {
   const witnessName = testimony.witness?.full_name ?? "Anonyme";
-  const hasSummary = !!testimony.summary;
   const contentPreview = testimony.summary
     ? testimony.summary
     : testimony.content
@@ -38,9 +37,6 @@ export function TestimonyCard({ testimony }: TestimonyCardProps) {
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
-            {hasSummary && (
-              <SparklesIcon className="mr-1 inline size-3 text-[#B8860B]" />
-            )}
             {contentPreview}
           </p>
           <div className="flex items-center justify-between text-xs text-muted-foreground">

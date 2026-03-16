@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2Icon, PlusIcon, UserIcon, SparklesIcon } from "lucide-react";
+import { Loader2Icon, PlusIcon, UserIcon, CheckCircle2Icon } from "lucide-react";
 
 interface TestimonyFormProps {
   witnesses: Pick<Witness, "id" | "full_name">[];
@@ -301,15 +301,15 @@ export function TestimonyForm({
           </Select>
           {isDetectingLanguage && (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <SparklesIcon className="size-3 animate-pulse" />
+              <Loader2Icon className="size-3 animate-spin" />
               Détection...
             </span>
           )}
         </div>
         {languageAutoDetected && (
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
-            <SparklesIcon className="size-3" />
-            Langue détectée automatiquement par l&apos;IA
+            <CheckCircle2Icon className="size-3" />
+            Langue détectée automatiquement
           </p>
         )}
       </div>

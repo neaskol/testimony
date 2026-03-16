@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, SparklesIcon } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import type { WitnessTestimonyWithReading, WitnessStats } from "@/lib/types";
 import { formatDate, formatRelative } from "@/lib/utils";
 import { StatusBadge } from "@/components/testimonies/status-badge";
@@ -60,7 +60,6 @@ export function WitnessTestimonyList({
                 <div className="min-w-0 flex-1 space-y-1">
                   {testimony.summary ? (
                     <p className="text-sm leading-relaxed text-foreground line-clamp-2">
-                      <SparklesIcon className="mr-1 inline size-3 text-[#B8860B]" />
                       {testimony.summary}
                     </p>
                   ) : testimony.content ? (

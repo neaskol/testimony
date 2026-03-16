@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SearchIcon, SparklesIcon, XIcon, Loader2Icon } from "lucide-react";
+import { SearchIcon, SearchCheckIcon, XIcon, Loader2Icon, CalendarIcon } from "lucide-react";
 import { semanticSearch } from "@/actions/ai";
 
 const STATUS_OPTIONS = [
@@ -32,6 +32,8 @@ export function TestimonyFilters() {
 
   const currentStatus = searchParams.get("status") ?? "all";
   const currentSearch = searchParams.get("search") ?? "";
+  const currentDateFrom = searchParams.get("dateFrom") ?? "";
+  const currentDateTo = searchParams.get("dateTo") ?? "";
   const isAiMode = searchParams.get("ai") === "1";
 
   const updateParams = useCallback(
@@ -101,7 +103,7 @@ export function TestimonyFilters() {
     });
   }, [router, startTransition]);
 
-  const hasFilters = currentStatus !== "all" || currentSearch !== "" || isAiMode;
+  const hasFilters = currentStatus !== "all" || currentSearch !== "" || currentDateFrom !== "" || currentDateTo !== "" || isAiMode;
 
   return (
     <div className="flex flex-col gap-3">
@@ -110,14 +112,14 @@ export function TestimonyFilters() {
           {isAiSearching ? (
             <Loader2Icon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 animate-spin text-[#B8860B]" />
           ) : isAiMode ? (
-            <SparklesIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-[#B8860B]" />
+            <SearchCheckIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-[#B8860B]" />
           ) : (
             <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           )}
           <Input
             placeholder={
               isAiMode
-                ? "Recherche intelligente par l'IA..."
+                ? "Recherche approfondie..."
                 : "Rechercher par nom ou contenu..."
             }
             defaultValue={currentSearch}
@@ -145,9 +147,10 @@ export function TestimonyFilters() {
           size="sm"
           onClick={toggleAiSearch}
           className={isAiMode ? "bg-[#B8860B] hover:bg-[#996F09]" : ""}
+          title="Recherche approfondie"
         >
-          <SparklesIcon className="size-4" />
-          IA
+          <SearchCheckIcon className="size-4" />
+          Approfondie
         </Button>
 
         <Select
@@ -174,10 +177,32 @@ export function TestimonyFilters() {
         )}
       </div>
 
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex items-center gap-2">
+          <CalendarIcon className="size-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Du</span>
+          <Input
+            type="date"
+            defaultValue={currentDateFrom}
+            className="w-auto"
+            onChange={(e) => updateParams("dateFrom", e.currentTarget.value)}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Au</span>
+          <Input
+            type="date"
+            defaultValue={currentDateTo}
+            className="w-auto"
+            onChange={(e) => updateParams("dateTo", e.currentTarget.value)}
+          />
+        </div>
+      </div>
+
       {isAiMode && (
         <p className="flex items-center gap-1 text-xs text-muted-foreground">
-          <SparklesIcon className="size-3 text-[#B8860B]" />
-          Mode IA actif — tapez votre recherche et appuyez sur Entrer pour lancer la recherche intelligente
+          <SearchCheckIcon className="size-3 text-[#B8860B]" />
+          Recherche approfondie — tapez votre recherche et appuyez sur Entrer
         </p>
       )}
     </div>

@@ -15,6 +15,8 @@ interface PageProps {
     search?: string;
     ai?: string;
     aiIds?: string;
+    dateFrom?: string;
+    dateTo?: string;
   }>;
 }
 
@@ -32,6 +34,8 @@ export default async function TestimoniesPage({ searchParams }: PageProps) {
     witnessId?: string;
     search?: string;
     aiMatchIds?: string[];
+    dateFrom?: string;
+    dateTo?: string;
   } = {};
 
   if (
@@ -45,6 +49,13 @@ export default async function TestimoniesPage({ searchParams }: PageProps) {
 
   if (params.witness) {
     filters.witnessId = params.witness;
+  }
+
+  if (params.dateFrom) {
+    filters.dateFrom = params.dateFrom;
+  }
+  if (params.dateTo) {
+    filters.dateTo = params.dateTo;
   }
 
   // AI semantic search mode

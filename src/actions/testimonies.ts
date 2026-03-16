@@ -45,6 +45,8 @@ export async function getTestimonies(filters?: {
   witnessId?: string;
   search?: string;
   aiMatchIds?: string[];
+  dateFrom?: string;
+  dateTo?: string;
 }): Promise<ActionResult<TestimonyWithWitness[]>> {
   const profileResult = await requireRole(["superadmin", "admin"]);
   if (profileResult.error) return { data: null, error: profileResult.error };
@@ -68,6 +70,14 @@ export async function getTestimonies(filters?: {
 
   if (filters?.witnessId) {
     query = query.eq("witness_id", filters.witnessId);
+  }
+
+  if (filters?.dateFrom) {
+    query = query.gte("created_at", `${filters.dateFrom}T00:00:00`);
+  }
+
+  if (filters?.dateTo) {
+    query = query.lte("created_at", `${filters.dateTo}T23:59:59`);
   }
 
   // AI semantic search: filter by pre-computed IDs from OpenAI
