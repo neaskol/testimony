@@ -38,7 +38,7 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
+      <div className="space-y-3">
         <Link
           href="/admin/plans"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -46,33 +46,32 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
           <ArrowLeft className="size-3.5" />
           Retour aux plannings
         </Link>
-        <div className="mt-2 flex items-start justify-between">
-          <div>
-            <h1 className="font-serif text-2xl font-bold tracking-tight">
-              Planning : {plan.service.title}
-            </h1>
-            <div className="mt-1 flex items-center gap-3 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <Calendar className="size-3.5" />
-                {formatDate(plan.service.service_date)}
-              </span>
-              {plan.service.scriptures.length > 0 && (
-                <span className="flex items-center gap-1.5">
-                  <BookOpen className="size-3.5" />
-                  {plan.service.scriptures.join(" / ")}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link href={`/admin/plans/${id}/reunion`}>
-              <Button className="bg-[#B8860B] text-white hover:bg-[#996F09]">
-                <Play className="size-4" />
-                Démarrer la lecture
-              </Button>
-            </Link>
-            <DeletePlanButton planId={id} />
-          </div>
+
+        <h1 className="font-serif text-xl font-bold tracking-tight sm:text-2xl">
+          {plan.service.title}
+        </h1>
+
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="size-3.5" />
+            {formatDate(plan.service.service_date)}
+          </span>
+          {plan.service.scriptures.length > 0 && (
+            <span className="flex items-center gap-1.5">
+              <BookOpen className="size-3.5" />
+              {plan.service.scriptures.join(" / ")}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link href={`/admin/plans/${id}/reunion`}>
+            <Button size="sm" className="bg-[#B8860B] text-white hover:bg-[#996F09]">
+              <Play className="size-3.5" />
+              Démarrer la lecture
+            </Button>
+          </Link>
+          <DeletePlanButton planId={id} />
         </div>
       </div>
 
