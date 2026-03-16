@@ -5,9 +5,15 @@ import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/actions/auth";
 import type { ActionResult, LanguageCode } from "@/lib/types";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+
+function getOpenAI(): OpenAI | null {
+  if (!process.env.OPENAI_API_KEY) return null;
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return _openai;
+}
 
 // ============================================================
 // Language Detection
@@ -19,6 +25,9 @@ export async function detectLanguage(
   if (!text.trim() || text.trim().length < 10) {
     return { data: "fr", error: null };
   }
+
+  const openai = getOpenAI();
+  if (!openai) return { data: "fr", error: null };
 
   try {
     const response = await openai.chat.completions.create({
@@ -61,6 +70,9 @@ export async function generateSummary(
   if (!content.trim() || content.trim().length < 20) {
     return { data: null, error: "Contenu trop court pour un résumé" };
   }
+
+  const openai = getOpenAI();
+  if (!openai) return { data: null, error: "OpenAI non configuré" };
 
   try {
     const response = await openai.chat.completions.create({
@@ -137,6 +149,9 @@ export async function semanticSearch(
       return `[${i}] ${witnessName}: ${content}`;
     })
     .join("\n");
+
+  const openai = getOpenAI();
+  if (!openai) return { data: null, error: "OpenAI non configuré" };
 
   try {
     const response = await openai.chat.completions.create({
