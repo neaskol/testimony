@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2Icon, UserIcon } from "lucide-react";
+import { Loader2Icon, PlusIcon, UserIcon } from "lucide-react";
 
 interface TestimonyFormProps {
   witnesses: Pick<Witness, "id" | "full_name">[];
@@ -57,6 +57,8 @@ export function TestimonyForm({
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const formRef = useRef<HTMLFormElement>(null);
+  const createAnotherRef = useRef(false);
 
   // Initialize witness name from existing testimony
   useEffect(() => {
@@ -121,10 +123,22 @@ export function TestimonyForm({
     setSuggestions([]);
   }
 
+  function resetForm() {
+    formRef.current?.reset();
+    setWitnessName("");
+    setWitnessId("");
+    setSelectedLanguage("fr");
+    setSuggestions([]);
+    setShowSuggestions(false);
+  }
+
   async function handleSubmit(formData: FormData) {
     formData.set("witness_id", witnessId);
     formData.set("witness_name", witnessName);
     formData.set("source_language", selectedLanguage);
+
+    const wantsAnother = createAnotherRef.current;
+    createAnotherRef.current = false;
 
     startTransition(async () => {
       if (mode === "create") {
@@ -133,8 +147,13 @@ export function TestimonyForm({
           toast.error(result.error);
           return;
         }
-        toast.success("Témoignage créé avec succès");
-        router.push(`/admin/testimonies/${result.data!.id}`);
+        if (wantsAnother) {
+          toast.success("Témoignage créé — prêt pour le suivant");
+          resetForm();
+        } else {
+          toast.success("Témoignage créé avec succès");
+          router.push(`/admin/testimonies/${result.data!.id}`);
+        }
       } else {
         const result = await updateTestimony(testimony!.id, formData);
         if (result.error) {
@@ -148,7 +167,7 @@ export function TestimonyForm({
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form ref={formRef} action={handleSubmit} className="space-y-6">
       {/* Witness name with autocomplete */}
       <div className="space-y-2">
         <Label htmlFor="witness_name">Nom du témoin</Label>
@@ -291,11 +310,25 @@ export function TestimonyForm({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center gap-3 pt-2">
         <Button type="submit" disabled={isPending}>
           {isPending && <Loader2Icon className="size-4 animate-spin" />}
           {mode === "create" ? "Créer le témoignage" : "Enregistrer"}
         </Button>
+        {mode === "create" && (
+          <Button
+            type="submit"
+            variant="secondary"
+            disabled={isPending}
+            onClick={() => {
+              createAnotherRef.current = true;
+            }}
+          >
+            {isPending && <Loader2Icon className="size-4 animate-spin" />}
+            <PlusIcon className="size-4" />
+            Créer et ajouter un autre
+          </Button>
+        )}
         <Button
           type="button"
           variant="outline"
