@@ -13,6 +13,8 @@ interface PageProps {
     status?: string;
     witness?: string;
     search?: string;
+    ai?: string;
+    aiIds?: string;
   }>;
 }
 
@@ -29,6 +31,7 @@ export default async function TestimoniesPage({ searchParams }: PageProps) {
     status?: TestimonyStatus;
     witnessId?: string;
     search?: string;
+    aiMatchIds?: string[];
   } = {};
 
   if (
@@ -44,7 +47,14 @@ export default async function TestimoniesPage({ searchParams }: PageProps) {
     filters.witnessId = params.witness;
   }
 
-  if (params.search) {
+  // AI semantic search mode
+  if (params.ai === "1" && params.aiIds) {
+    if (params.aiIds === "none") {
+      filters.aiMatchIds = [];
+    } else {
+      filters.aiMatchIds = params.aiIds.split(",").filter(Boolean);
+    }
+  } else if (params.search) {
     filters.search = params.search;
   }
 

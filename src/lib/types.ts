@@ -54,6 +54,7 @@ export interface Testimony {
   source_language: LanguageCode;
   status: TestimonyStatus;
   tags: string[];
+  summary: string | null;
   private_notes: string | null;
   created_at: string;
   updated_at: string;

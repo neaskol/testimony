@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner";
 import { createTestimony, updateTestimony } from "@/actions/testimonies";
 import { searchWitnessesByName } from "@/actions/witnesses";
+import { detectLanguage } from "@/actions/ai";
 import type { Testimony, Witness } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2Icon, PlusIcon, UserIcon } from "lucide-react";
+import { Loader2Icon, PlusIcon, UserIcon, SparklesIcon } from "lucide-react";
 
 interface TestimonyFormProps {
   witnesses: Pick<Witness, "id" | "full_name">[];
@@ -59,6 +60,8 @@ export function TestimonyForm({
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const formRef = useRef<HTMLFormElement>(null);
   const createAnotherRef = useRef(false);
+  const [isDetectingLanguage, setIsDetectingLanguage] = useState(false);
+  const [languageAutoDetected, setLanguageAutoDetected] = useState(false);
 
   // Initialize witness name from existing testimony
   useEffect(() => {
@@ -123,11 +126,23 @@ export function TestimonyForm({
     setSuggestions([]);
   }
 
+  async function handleContentBlur(text: string) {
+    if (!text.trim() || text.trim().length < 10) return;
+    setIsDetectingLanguage(true);
+    const result = await detectLanguage(text);
+    if (result.data) {
+      setSelectedLanguage(result.data);
+      setLanguageAutoDetected(true);
+    }
+    setIsDetectingLanguage(false);
+  }
+
   function resetForm() {
     formRef.current?.reset();
     setWitnessName("");
     setWitnessId("");
     setSelectedLanguage("fr");
+    setLanguageAutoDetected(false);
     setSuggestions([]);
     setShowSuggestions(false);
   }
@@ -261,24 +276,42 @@ export function TestimonyForm({
           rows={8}
           required
           className="min-h-[160px]"
+          onBlur={(e) => handleContentBlur(e.target.value)}
         />
       </div>
 
       {/* Source language */}
       <div className="space-y-2">
         <Label htmlFor="source_language">Langue source</Label>
-        <Select
-          value={selectedLanguage}
-          onValueChange={(val) => setSelectedLanguage(val ?? "fr")}
-        >
-          <SelectTrigger className="w-full sm:w-48">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="fr">Français</SelectItem>
-            <SelectItem value="mg">Malgache</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select
+            value={selectedLanguage}
+            onValueChange={(val) => {
+              setSelectedLanguage(val ?? "fr");
+              setLanguageAutoDetected(false);
+            }}
+          >
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="fr">Français</SelectItem>
+              <SelectItem value="mg">Malgache</SelectItem>
+            </SelectContent>
+          </Select>
+          {isDetectingLanguage && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <SparklesIcon className="size-3 animate-pulse" />
+              Détection...
+            </span>
+          )}
+        </div>
+        {languageAutoDetected && (
+          <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            <SparklesIcon className="size-3" />
+            Langue détectée automatiquement par l&apos;IA
+          </p>
+        )}
       </div>
 
       {/* Tags */}

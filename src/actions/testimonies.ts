@@ -6,10 +6,12 @@ import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/actions/auth";
 import type {
   ActionResult,
+  LanguageCode,
   TestimonyStatus,
   TestimonyWithWitness,
   TestimonyWithTranslation,
 } from "@/lib/types";
+import { generateSummary } from "@/actions/ai";
 
 // ============================================================
 // Validation schemas
@@ -42,6 +44,7 @@ export async function getTestimonies(filters?: {
   status?: TestimonyStatus;
   witnessId?: string;
   search?: string;
+  aiMatchIds?: string[];
 }): Promise<ActionResult<TestimonyWithWitness[]>> {
   const profileResult = await requireRole(["superadmin", "admin"]);
   if (profileResult.error) return { data: null, error: profileResult.error };
@@ -67,8 +70,36 @@ export async function getTestimonies(filters?: {
     query = query.eq("witness_id", filters.witnessId);
   }
 
-  if (filters?.search) {
-    query = query.ilike("content", `%${filters.search}%`);
+  // AI semantic search: filter by pre-computed IDs from OpenAI
+  if (filters?.aiMatchIds) {
+    if (filters.aiMatchIds.length === 0) {
+      return { data: [], error: null };
+    }
+    query = query.in("id", filters.aiMatchIds);
+  } else if (filters?.search) {
+    const search = filters.search.trim();
+
+    // Find witness IDs matching the search term
+    let witnessQuery = supabase
+      .from("witnesses")
+      .select("id")
+      .ilike("full_name", `%${search}%`);
+
+    if (profile.role !== "superadmin") {
+      witnessQuery = witnessQuery.eq("created_by", profile.id);
+    }
+
+    const { data: matchingWitnesses } = await witnessQuery;
+    const matchingIds = matchingWitnesses?.map((w) => w.id) ?? [];
+
+    // Search in content OR by witness name
+    if (matchingIds.length > 0) {
+      query = query.or(
+        `content.ilike.%${search}%,witness_id.in.(${matchingIds.join(",")})`
+      );
+    } else {
+      query = query.ilike("content", `%${search}%`);
+    }
   }
 
   const { data, error } = await query;
@@ -219,6 +250,16 @@ export async function createTestimony(
     return { data: null, error: error.message };
   }
 
+  // Generate AI summary in the background (non-blocking for the user)
+  generateSummary(content, source_language as LanguageCode).then(async (summaryResult) => {
+    if (summaryResult.data) {
+      await supabase
+        .from("testimonies")
+        .update({ summary: summaryResult.data })
+        .eq("id", data.id);
+    }
+  });
+
   revalidatePath("/admin/testimonies");
   revalidatePath("/admin/witnesses");
   return { data: { id: data.id }, error: null };
@@ -319,6 +360,16 @@ export async function updateTestimony(
   if (error) {
     return { data: null, error: error.message };
   }
+
+  // Regenerate AI summary when content changes
+  generateSummary(content, source_language as LanguageCode).then(async (summaryResult) => {
+    if (summaryResult.data) {
+      await supabase
+        .from("testimonies")
+        .update({ summary: summaryResult.data })
+        .eq("id", id);
+    }
+  });
 
   revalidatePath("/admin/testimonies");
   revalidatePath(`/admin/testimonies/${id}`);
