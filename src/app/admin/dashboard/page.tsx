@@ -37,11 +37,11 @@ export default async function AdminDashboard() {
   // Contextual summary
   let contextMessage: string;
   if (totalTestimonies === 0) {
-    contextMessage = "Aucun t\u00e9moignage pour le moment.";
+    contextMessage = "Aucun témoignage pour le moment.";
   } else {
     const parts: string[] = [];
     parts.push(
-      `${totalTestimonies} t\u00e9moignage${totalTestimonies !== 1 ? "s" : ""}`
+      `${totalTestimonies} témoignage${totalTestimonies !== 1 ? "s" : ""}`
     );
     if (inTranslation > 0) {
       parts.push(`${inTranslation} en traduction`);
@@ -51,7 +51,7 @@ export default async function AdminDashboard() {
         `${translated} traduit${translated !== 1 ? "s" : ""}`
       );
     }
-    contextMessage = parts.join(" \u00b7 ");
+    contextMessage = parts.join(" · ");
   }
 
   // Next upcoming service
@@ -80,7 +80,7 @@ export default async function AdminDashboard() {
         <p className="text-base text-muted-foreground">{contextMessage}</p>
         {nextService && (
           <p className="text-sm">
-            Prochaine r&eacute;union :{" "}
+            Prochaine réunion :{" "}
             {nextServicePlan ? (
               <Link
                 href={`/admin/plans/${nextServicePlan.id}`}
@@ -108,7 +108,7 @@ export default async function AdminDashboard() {
                 {totalTestimonies}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
-                t&eacute;moignage{totalTestimonies !== 1 ? "s" : ""}
+                témoignage{totalTestimonies !== 1 ? "s" : ""}
               </span>
             </div>
             <div>
@@ -124,14 +124,14 @@ export default async function AdminDashboard() {
                 {planned}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
-                planifi&eacute;{planned !== 1 ? "s" : ""}
+                planifié{planned !== 1 ? "s" : ""}
               </span>
             </div>
           </div>
 
           {/* Section title */}
           <h2 className="font-serif text-lg font-semibold">
-            Plannings r&eacute;cents
+            Plannings récents
           </h2>
           <div className="mt-1 border-b border-border" />
 
@@ -151,8 +151,8 @@ export default async function AdminDashboard() {
                   <div className="min-w-0">
                     <p className="font-semibold">{plan.service.title}</p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {formatDateShort(plan.service.service_date)} &mdash;{" "}
-                      {plan.testimony_ids.length} t&eacute;moignage
+                      {formatDateShort(plan.service.service_date)} {"—"}{" "}
+                      {plan.testimony_ids.length} témoignage
                       {plan.testimony_ids.length !== 1 ? "s" : ""}
                     </p>
                   </div>
@@ -183,7 +183,7 @@ export default async function AdminDashboard() {
                 {totalTestimonies}
               </p>
               <p className="text-xs text-muted-foreground">
-                T&eacute;moignage{totalTestimonies !== 1 ? "s" : ""}
+                Témoignage{totalTestimonies !== 1 ? "s" : ""}
               </p>
             </div>
             <div className="border-b border-border" />
@@ -199,7 +199,7 @@ export default async function AdminDashboard() {
                 {planned}
               </p>
               <p className="text-xs text-muted-foreground">
-                Planifi&eacute;{planned !== 1 ? "s" : ""}
+                Planifié{planned !== 1 ? "s" : ""}
               </p>
             </div>
             <div className="border-b border-border" />
@@ -207,10 +207,10 @@ export default async function AdminDashboard() {
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {nextService
                   ? formatDateShort(nextService.service_date)
-                  : "\u2014"}
+                  : "—"}
               </p>
               <p className="text-xs text-muted-foreground">
-                Prochaine r&eacute;union
+                Prochaine réunion
               </p>
             </div>
           </div>

@@ -36,15 +36,15 @@ export default async function TranslatorDashboard() {
   if (pendingCount > 0) {
     contextMessage =
       pendingCount === 1
-        ? "1 t\u00e9moignage vous attend."
-        : `${pendingCount} t\u00e9moignages vous attendent.`;
+        ? "1 témoignage vous attend."
+        : `${pendingCount} témoignages vous attendent.`;
   } else if (inProgressCount > 0) {
     contextMessage =
       inProgressCount === 1
         ? "1 traduction en cours."
         : `${inProgressCount} traductions en cours.`;
   } else {
-    contextMessage = "Tout est \u00e0 jour.";
+    contextMessage = "Tout est à jour.";
   }
 
   // Next plan within 7 days
@@ -118,13 +118,13 @@ export default async function TranslatorDashboard() {
                 {translatedCount}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
-                termin\u00e9e{translatedCount !== 1 ? "s" : ""}
+                terminée{translatedCount !== 1 ? "s" : ""}
               </span>
             </div>
           </div>
 
           {/* Section title */}
-          <h2 className="font-serif text-lg font-semibold">\u00c0 traduire</h2>
+          <h2 className="font-serif text-lg font-semibold">À traduire</h2>
           <div className="mt-1 border-b border-border" />
 
           {/* Article list */}
@@ -137,7 +137,7 @@ export default async function TranslatorDashboard() {
               {displayAssignments.map((assignment) => {
                 const testimony = assignment.testimony;
                 const witnessName =
-                  testimony.witness?.full_name ?? "T\u00e9moin anonyme";
+                  testimony.witness?.full_name ?? "Témoin anonyme";
 
                 // Extract first sentence for the editorial extract
                 const rawContent = testimony.content ?? "";
@@ -147,7 +147,7 @@ export default async function TranslatorDashboard() {
                   firstSentence = match
                     ? match[0].trim()
                     : rawContent.length > 120
-                      ? rawContent.slice(0, 120).trim() + "\u2026"
+                      ? rawContent.slice(0, 120).trim() + "…"
                       : rawContent.trim();
                 }
 
@@ -161,12 +161,12 @@ export default async function TranslatorDashboard() {
                       <p className="text-sm font-semibold">{witnessName}</p>
                       {firstSentence && (
                         <p className="mt-0.5 line-clamp-2 text-sm italic text-muted-foreground">
-                          &laquo;&nbsp;{firstSentence}&nbsp;&raquo;
+                          {"« "}{firstSentence}{" »"}
                         </p>
                       )}
                       <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
                         <StatusBadge status={testimony.status} />
-                        <span>&middot;</span>
+                        <span>{"·"}</span>
                         <span>{formatRelative(assignment.assigned_at)}</span>
                       </div>
                     </div>
@@ -206,8 +206,8 @@ export default async function TranslatorDashboard() {
                         {plan.service.title}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {formatDateShort(plan.service.service_date)} &mdash;{" "}
-                        {plan.testimony_ids.length} t\u00e9moignage
+                        {formatDateShort(plan.service.service_date)} {"—"}{" "}
+                        {plan.testimony_ids.length} témoignage
                         {plan.testimony_ids.length !== 1 ? "s" : ""}
                       </p>
                     </div>
@@ -255,7 +255,7 @@ export default async function TranslatorDashboard() {
                 {translatedCount}
               </p>
               <p className="text-xs text-muted-foreground">
-                Termin\u00e9e{translatedCount !== 1 ? "s" : ""}
+                Terminée{translatedCount !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
@@ -278,8 +278,8 @@ export default async function TranslatorDashboard() {
                       {plan.service.title}
                     </p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {formatDateShort(plan.service.service_date)} &mdash;{" "}
-                      {plan.testimony_ids.length} t\u00e9moignage
+                      {formatDateShort(plan.service.service_date)} {"—"}{" "}
+                      {plan.testimony_ids.length} témoignage
                       {plan.testimony_ids.length !== 1 ? "s" : ""}
                     </p>
                   </Link>
