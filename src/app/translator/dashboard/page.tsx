@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/actions/auth";
 import { getMyAssignments } from "@/actions/translations";
+import { getTranslatorPlans } from "@/actions/plans";
 import { StatusBadge } from "@/components/testimonies/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,14 +12,20 @@ import {
   CheckCircle,
   ArrowRight,
   User,
+  CalendarDays,
 } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 export default async function TranslatorDashboard() {
   const { data: profile, error } = await getCurrentProfile();
   if (error || !profile) redirect("/login");
 
-  const { data: assignments } = await getMyAssignments();
+  const [{ data: assignments }, { data: plans }] = await Promise.all([
+    getMyAssignments(),
+    getTranslatorPlans(),
+  ]);
   const allAssignments = assignments ?? [];
+  const allPlans = plans ?? [];
 
   // Compute stats
   const totalAssignments = allAssignments.length;
@@ -47,7 +54,12 @@ export default async function TranslatorDashboard() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <DashboardCard
+          title="Plannings"
+          value={String(allPlans.length)}
+          icon={<CalendarDays className="size-5 text-muted-foreground" />}
+        />
         <DashboardCard
           title="Assignations"
           value={String(totalAssignments)}
@@ -120,6 +132,51 @@ export default async function TranslatorDashboard() {
                   </Link>
                 );
               })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Upcoming plans */}
+      <Card>
+        <CardHeader className="flex-row items-center justify-between">
+          <CardTitle className="font-serif">Plannings assignés</CardTitle>
+          {allPlans.length > 0 && (
+            <Link href="/translator/plans">
+              <Button variant="ghost" size="sm" className="gap-1">
+                Tout voir
+                <ArrowRight className="size-4" />
+              </Button>
+            </Link>
+          )}
+        </CardHeader>
+        <CardContent>
+          {allPlans.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <CalendarDays className="size-8 text-muted-foreground/50" />
+              <p className="mt-3 text-sm text-muted-foreground">
+                Aucun planning assigné pour le moment.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {allPlans.slice(0, 5).map((plan) => (
+                <Link
+                  key={plan.id}
+                  href={`/translator/plans/${plan.id}`}
+                  className="flex items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/30"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium">
+                      {plan.service.title}
+                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {formatDate(plan.service.service_date)} — {plan.testimony_ids.length} témoignage{plan.testimony_ids.length !== 1 ? "s" : ""}
+                    </p>
+                  </div>
+                  <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+                </Link>
+              ))}
             </div>
           )}
         </CardContent>
