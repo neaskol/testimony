@@ -25,7 +25,7 @@ export default async function WitnessesPage() {
           </p>
         </div>
         <Link href="/admin/witnesses/new">
-          <Button className="bg-[#B8860B] text-white hover:bg-[#996F09]">
+          <Button>
             <Plus className="size-4" />
             Nouveau témoin
           </Button>
@@ -52,7 +52,7 @@ export default async function WitnessesPage() {
           <Link href="/admin/witnesses/new" className="mt-4">
             <Button
               variant="outline"
-              className="border-[#B8860B]/30 text-[#B8860B] hover:bg-[#B8860B]/5"
+              className="border-gold/30 text-gold hover:bg-gold/5"
             >
               <Plus className="size-4" />
               Ajouter un témoin

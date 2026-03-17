@@ -44,7 +44,7 @@ export function ReunionNavigation({
           className={`border-b px-4 py-2 text-xs ${
             isDarkMode
               ? "border-white/5 text-reunion-fg/60"
-              : "border-border/50 text-[#64748B]"
+              : "border-border/50 text-muted-foreground"
           }`}
         >
           Suivant : {nextTestimony.witnessName}
@@ -66,14 +66,14 @@ export function ReunionNavigation({
           }`}
         >
           <ChevronLeft className="size-5" />
-          <span className="sr-only">Précédent</span>
+          <span className="sr-only">Precedent</span>
         </Button>
 
         {/* Progress indicator */}
         <div className="flex flex-col items-center gap-1">
           <span
             className={`text-sm font-medium tabular-nums ${
-              isDarkMode ? "text-reunion-fg" : "text-[#0A0A0A]"
+              isDarkMode ? "text-reunion-fg" : "text-foreground"
             }`}
           >
             {currentIndex + 1} / {total}
@@ -86,7 +86,7 @@ export function ReunionNavigation({
                 key={t.id}
                 className={`inline-block size-1.5 rounded-full transition-colors ${
                   i === currentIndex
-                    ? "bg-[#B8860B]"
+                    ? "bg-gold"
                     : t.status === "read"
                       ? isDarkMode
                         ? "bg-green-400/60"
@@ -97,7 +97,7 @@ export function ReunionNavigation({
                           : "bg-yellow-500/60"
                         : isDarkMode
                           ? "bg-reunion-fg/20"
-                          : "bg-[#E2E8F0]"
+                          : "bg-border"
                 }`}
               />
             ))}
@@ -114,7 +114,7 @@ export function ReunionNavigation({
             className={`min-h-[48px] text-xs ${
               isDarkMode
                 ? "text-reunion-fg/60 hover:bg-white/10 hover:text-reunion-fg disabled:text-reunion-fg/30"
-                : "text-[#64748B] hover:text-foreground disabled:text-muted-foreground/30"
+                : "text-muted-foreground hover:text-foreground disabled:text-muted-foreground/30"
             }`}
           >
             <SkipForward className="size-4" />
@@ -124,7 +124,7 @@ export function ReunionNavigation({
           <Button
             disabled={isLast}
             onClick={onNext}
-            className="min-h-[48px] min-w-[48px] bg-[#B8860B] text-white hover:bg-[#996F09] disabled:opacity-40"
+            className="min-h-[48px] min-w-[48px] bg-gold text-white hover:bg-gold-hover disabled:opacity-40"
           >
             <ChevronRight className="size-5" />
             <span className="sr-only">Suivant</span>

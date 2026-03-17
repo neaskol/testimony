@@ -52,7 +52,7 @@ export function ReunionHeader({
           }
         >
           <ArrowLeft className="size-5" />
-          <span className="sr-only">Quitter le mode réunion</span>
+          <span className="sr-only">Quitter le mode reunion</span>
         </Button>
 
         {/* Title in center (compact) */}
@@ -62,7 +62,7 @@ export function ReunionHeader({
             className={`flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium transition-colors ${
               isDarkMode
                 ? "text-reunion-fg/80 hover:bg-white/10"
-                : "text-[#64748B] hover:bg-muted"
+                : "text-muted-foreground hover:bg-muted"
             }`}
           >
             {service.title}
@@ -75,7 +75,7 @@ export function ReunionHeader({
         ) : (
           <span
             className={`text-sm font-medium ${
-              isDarkMode ? "text-reunion-fg/80" : "text-[#64748B]"
+              isDarkMode ? "text-reunion-fg/80" : "text-muted-foreground"
             }`}
           >
             {service.title}
@@ -110,7 +110,7 @@ export function ReunionHeader({
             }
           >
             <Menu className="size-5" />
-            <span className="sr-only">Liste des témoignages</span>
+            <span className="sr-only">Liste des temoignages</span>
           </Button>
         </div>
       </div>
@@ -125,7 +125,7 @@ export function ReunionHeader({
           {service.subject && (
             <p
               className={`text-sm ${
-                isDarkMode ? "text-reunion-fg/70" : "text-[#64748B]"
+                isDarkMode ? "text-reunion-fg/70" : "text-muted-foreground"
               }`}
             >
               <span className="font-medium">Sujet :</span> {service.subject}
@@ -135,7 +135,7 @@ export function ReunionHeader({
           {service.inspiration && (
             <p
               className={`text-sm ${
-                isDarkMode ? "text-reunion-fg/70" : "text-[#64748B]"
+                isDarkMode ? "text-reunion-fg/70" : "text-muted-foreground"
               }`}
             >
               <span className="font-medium">Inspiration :</span>{" "}
@@ -146,7 +146,7 @@ export function ReunionHeader({
           {service.scriptures.length > 0 && (
             <p
               className={`flex items-center gap-1.5 text-sm ${
-                isDarkMode ? "text-reunion-fg/70" : "text-[#64748B]"
+                isDarkMode ? "text-reunion-fg/70" : "text-muted-foreground"
               }`}
             >
               <BookOpen className="size-3.5 shrink-0" />

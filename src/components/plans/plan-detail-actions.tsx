@@ -190,7 +190,7 @@ export function TranslatorAssignment({
             onClick={handleAssign}
             disabled={isPending || !selectedId}
             size="default"
-            className="bg-[#B8860B] text-white hover:bg-[#996F09]"
+            className="bg-gold text-white hover:bg-gold-hover"
           >
             <UserPlus className="size-4" />
             Assigner

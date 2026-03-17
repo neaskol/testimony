@@ -99,7 +99,7 @@ export function InviteTranslatorForm() {
       <Button
         type="submit"
         disabled={isPending}
-        className="bg-[#B8860B] text-white hover:bg-[#996F09]"
+        className="bg-gold text-white hover:bg-gold-hover"
       >
         {isPending ? "Création en cours..." : "Créer le compte traducteur"}
       </Button>

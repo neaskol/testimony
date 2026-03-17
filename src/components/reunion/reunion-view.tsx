@@ -54,7 +54,7 @@ export function ReunionView({
     return (
       <div
         className={`flex min-h-screen items-center justify-center ${
-          reunion.isDarkMode ? "bg-reunion-bg text-reunion-fg" : "bg-[#FAFAFA]"
+          reunion.isDarkMode ? "bg-reunion-bg text-reunion-fg" : "bg-background"
         }`}
       >
         <p className="text-lg">Aucun témoignage dans ce planning.</p>
@@ -65,7 +65,7 @@ export function ReunionView({
   return (
     <div
       className={`flex min-h-screen flex-col ${
-        reunion.isDarkMode ? "bg-reunion-bg" : "bg-[#FAFAFA]"
+        reunion.isDarkMode ? "bg-reunion-bg" : "bg-background"
       }`}
     >
       {/* Header */}

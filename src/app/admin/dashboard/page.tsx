@@ -105,7 +105,7 @@ function DashboardCard({
   return (
     <div className="rounded-lg border border-border bg-card p-6">
       <p className="text-sm font-medium text-muted-foreground">{title}</p>
-      <p className="mt-2 text-3xl font-bold tracking-tight">{value}</p>
+      <p className="mt-2 text-3xl font-bold tabular-nums tracking-tight">{value}</p>
     </div>
   );
 }

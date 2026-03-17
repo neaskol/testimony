@@ -168,7 +168,7 @@ export function TranslationEditor({
             <p className="text-sm text-destructive">{markError}</p>
           )}
           {markSuccess && (
-            <p className="flex items-center gap-1 text-sm text-[#166534]">
+            <p className="flex items-center gap-1 text-sm text-success">
               <CheckCircle className="size-4" />
               Marqué comme traduit
             </p>
@@ -177,7 +177,7 @@ export function TranslationEditor({
             <Button
               onClick={handleMarkComplete}
               disabled={isPending || !content.trim()}
-              className="bg-[#B8860B] text-white hover:bg-[#996F09]"
+              className="bg-gold text-white hover:bg-gold-hover"
             >
               {isPending ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -188,7 +188,7 @@ export function TranslationEditor({
             </Button>
           )}
           {isAlreadyTranslated && (
-            <span className="flex items-center gap-1 text-sm font-medium text-[#166534]">
+            <span className="flex items-center gap-1 text-sm font-medium text-success">
               <CheckCircle className="size-4" />
               Traduction terminée
             </span>

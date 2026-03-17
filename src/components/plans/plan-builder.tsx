@@ -313,7 +313,7 @@ export function PlanBuilder({
         <Button
           onClick={handleSubmit}
           disabled={isPending}
-          className="bg-[#B8860B] text-white hover:bg-[#996F09]"
+          className="bg-gold text-white hover:bg-gold-hover"
         >
           {isPending ? "Création..." : "Créer le planning"}
         </Button>

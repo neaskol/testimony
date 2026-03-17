@@ -55,7 +55,7 @@ export default async function TranslatorPlanDetailPage({
             </div>
           </div>
           <Link href={`/translator/plans/${id}/reunion`}>
-            <Button className="bg-[#B8860B] text-white hover:bg-[#996F09]">
+            <Button>
               <Play className="size-4" />
               Demarrer la lecture
             </Button>

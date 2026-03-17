@@ -110,9 +110,9 @@ export function TestimonyFilters() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1 sm:max-w-xs">
           {isAiSearching ? (
-            <Loader2Icon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 animate-spin text-[#B8860B]" />
+            <Loader2Icon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 animate-spin text-gold" />
           ) : isAiMode ? (
-            <SearchCheckIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-[#B8860B]" />
+            <SearchCheckIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-gold" />
           ) : (
             <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           )}
@@ -123,7 +123,7 @@ export function TestimonyFilters() {
                 : "Rechercher par nom ou contenu..."
             }
             defaultValue={currentSearch}
-            className={`pl-8 ${isAiMode ? "border-[#B8860B]/30 focus-visible:ring-[#B8860B]/30" : ""}`}
+            className={`pl-8 ${isAiMode ? "border-gold/30 focus-visible:ring-gold/30" : ""}`}
             onChange={(e) => {
               if (!isAiMode) {
                 handleSearchChange(e.currentTarget.value);
@@ -146,7 +146,7 @@ export function TestimonyFilters() {
           variant={isAiMode ? "default" : "outline"}
           size="sm"
           onClick={toggleAiSearch}
-          className={isAiMode ? "bg-[#B8860B] hover:bg-[#996F09]" : ""}
+          className={isAiMode ? "bg-gold hover:bg-gold-hover" : ""}
           title="Recherche approfondie"
         >
           <SearchCheckIcon className="size-4" />
@@ -201,7 +201,7 @@ export function TestimonyFilters() {
 
       {isAiMode && (
         <p className="flex items-center gap-1 text-xs text-muted-foreground">
-          <SearchCheckIcon className="size-3 text-[#B8860B]" />
+          <SearchCheckIcon className="size-3 text-gold" />
           Recherche approfondie — tapez votre recherche et appuyez sur Entrer
         </p>
       )}

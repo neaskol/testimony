@@ -268,7 +268,7 @@ export function PlanTestimonyManager({
           size="sm"
           onClick={handleSave}
           disabled={isPending}
-          className="bg-[#B8860B] text-white hover:bg-[#996F09]"
+          className="bg-gold text-white hover:bg-gold-hover"
         >
           {isPending ? "Enregistrement..." : "Enregistrer"}
         </Button>

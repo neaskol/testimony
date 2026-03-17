@@ -56,19 +56,19 @@ export default async function TranslatorDashboard() {
         <DashboardCard
           title="En cours de traduction"
           value={String(inProgressCount)}
-          icon={<Languages className="size-5 text-[#92400E]" />}
+          icon={<Languages className="size-5 text-warning" />}
         />
         <DashboardCard
-          title="Traductions terminees"
+          title="Traductions terminées"
           value={String(translatedCount)}
-          icon={<CheckCircle className="size-5 text-[#166534]" />}
+          icon={<CheckCircle className="size-5 text-success" />}
         />
       </div>
 
       {/* Recent assignments */}
       <Card>
         <CardHeader className="flex-row items-center justify-between">
-          <CardTitle className="font-serif">Assignations recentes</CardTitle>
+          <CardTitle className="font-serif">Assignations récentes</CardTitle>
           {totalAssignments > 0 && (
             <Link href="/translator/testimonies">
               <Button variant="ghost" size="sm" className="gap-1">
@@ -91,7 +91,7 @@ export default async function TranslatorDashboard() {
               {recentAssignments.map((assignment) => {
                 const testimony = assignment.testimony;
                 const witnessName =
-                  testimony.witness?.full_name ?? "Temoin anonyme";
+                  testimony.witness?.full_name ?? "Témoin anonyme";
                 const preview = testimony.content
                   ? testimony.content.length > 120
                     ? testimony.content.slice(0, 120) + "..."
@@ -143,7 +143,7 @@ function DashboardCard({
         <p className="text-sm font-medium text-muted-foreground">{title}</p>
         {icon}
       </div>
-      <p className="mt-2 text-3xl font-bold tracking-tight">{value}</p>
+      <p className="mt-2 text-3xl font-bold tabular-nums tracking-tight">{value}</p>
     </div>
   );
 }

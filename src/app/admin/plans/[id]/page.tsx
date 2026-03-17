@@ -66,7 +66,7 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
 
         <div className="flex items-center gap-2">
           <Link href={`/admin/plans/${id}/reunion`}>
-            <Button size="sm" className="bg-[#B8860B] text-white hover:bg-[#996F09]">
+            <Button size="sm">
               <Play className="size-3.5" />
               Démarrer la lecture
             </Button>

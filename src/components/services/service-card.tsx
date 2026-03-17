@@ -11,7 +11,7 @@ interface ServiceCardProps {
 export function ServiceCard({ service }: ServiceCardProps) {
   return (
     <Link href={`/admin/services/${service.id}`} className="block">
-      <Card className="transition-colors hover:ring-foreground/20">
+      <Card className="transition-all hover:ring-2 hover:ring-gold/30">
         <CardHeader>
           <CardTitle className="font-serif">{service.title}</CardTitle>
           <CardDescription className="flex items-center gap-1.5">

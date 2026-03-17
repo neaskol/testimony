@@ -20,7 +20,7 @@ export function ReunionTestimonyView({
       <header>
         <h2
           className={`font-serif text-2xl font-bold leading-tight ${
-            isDarkMode ? "text-reunion-fg" : "text-[#0A0A0A]"
+            isDarkMode ? "text-reunion-fg" : "text-foreground"
           }`}
         >
           {testimony.witnessName}
@@ -47,7 +47,7 @@ export function ReunionTestimonyView({
         {hasTranslation && (
           <p
             className={`mb-2 text-xs font-medium uppercase tracking-wider ${
-              isDarkMode ? "text-reunion-fg/50" : "text-[#64748B]"
+              isDarkMode ? "text-reunion-fg/50" : "text-muted-foreground"
             }`}
           >
             Texte original
@@ -55,14 +55,13 @@ export function ReunionTestimonyView({
         )}
         <div
           className={`whitespace-pre-wrap text-lg leading-[1.75] ${
-            isDarkMode ? "text-reunion-fg/90" : "text-[#0A0A0A]"
+            isDarkMode ? "text-reunion-fg/90" : "text-foreground"
           }`}
-          style={{ fontSize: "18px" }}
         >
           {testimony.content || (
             <span
               className={`italic ${
-                isDarkMode ? "text-reunion-fg/40" : "text-[#64748B]"
+                isDarkMode ? "text-reunion-fg/40" : "text-muted-foreground"
               }`}
             >
               Pas de contenu texte
@@ -83,16 +82,15 @@ export function ReunionTestimonyView({
           <section>
             <p
               className={`mb-2 text-xs font-medium uppercase tracking-wider ${
-                isDarkMode ? "text-reunion-fg/50" : "text-[#64748B]"
+                isDarkMode ? "text-reunion-fg/50" : "text-muted-foreground"
               }`}
             >
               Traduction
             </p>
             <div
               className={`whitespace-pre-wrap text-lg leading-[1.75] ${
-                isDarkMode ? "text-reunion-fg" : "text-[#0A0A0A]"
+                isDarkMode ? "text-reunion-fg" : "text-foreground"
               }`}
-              style={{ fontSize: "18px" }}
             >
               {testimony.translatedContent}
             </div>

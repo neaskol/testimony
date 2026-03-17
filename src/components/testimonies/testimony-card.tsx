@@ -26,7 +26,7 @@ export function TestimonyCard({ testimony }: TestimonyCardProps) {
 
   return (
     <Link href={`/admin/testimonies/${testimony.id}`} className="block group">
-      <Card className="transition-shadow hover:ring-2 hover:ring-[#B8860B]/30">
+      <Card className="transition-all hover:ring-2 hover:ring-gold/30">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="font-serif text-base font-semibold leading-snug">

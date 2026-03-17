@@ -5,7 +5,7 @@ import { ColorTag } from "@/components/witnesses/color-tag";
 import type { Witness } from "@/lib/types";
 
 const LANGUAGE_LABELS: Record<string, string> = {
-  fr: "Francais",
+  fr: "Français",
   mg: "Malgache",
 };
 
@@ -16,7 +16,7 @@ interface WitnessCardProps {
 export function WitnessCard({ witness }: WitnessCardProps) {
   return (
     <Link href={`/admin/witnesses/${witness.id}`} className="block">
-      <Card className="transition-shadow hover:shadow-md">
+      <Card className="transition-all hover:ring-2 hover:ring-gold/30">
         <CardContent>
           <div className="flex items-start gap-3">
             <ColorTag tag={witness.color_tag} className="mt-1.5" />

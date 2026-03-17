@@ -6,28 +6,28 @@ const STATUS_CONFIG: Record<
 > = {
   received: {
     label: "Reçu",
-    bg: "bg-[#DBEAFE]",
-    text: "text-[#1E40AF]",
+    bg: "bg-blue-100",
+    text: "text-blue-800",
   },
   in_translation: {
     label: "En traduction",
-    bg: "bg-[#FEF3C7]",
-    text: "text-[#92400E]",
+    bg: "bg-amber-100",
+    text: "text-amber-800",
   },
   translated: {
     label: "Traduit",
-    bg: "bg-[#DCFCE7]",
-    text: "text-[#166534]",
+    bg: "bg-green-100",
+    text: "text-green-800",
   },
   planned: {
     label: "Planifié",
-    bg: "bg-[#EDE9FE]",
-    text: "text-[#5B21B6]",
+    bg: "bg-violet-100",
+    text: "text-violet-800",
   },
   read: {
     label: "Lu",
-    bg: "bg-[#D1FAE5]",
-    text: "text-[#065F46]",
+    bg: "bg-emerald-100",
+    text: "text-emerald-800",
   },
 };
 

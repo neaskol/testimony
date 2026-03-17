@@ -71,7 +71,7 @@ export default async function ServiceDetailPage({
           </h2>
           <Link
             href="/admin/plans/new"
-            className="text-sm font-medium text-[#B8860B] transition-colors hover:text-[#996F09]"
+            className="text-sm font-medium text-gold transition-colors hover:text-gold-hover"
           >
             Créer un planning
           </Link>

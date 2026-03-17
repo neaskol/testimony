@@ -104,7 +104,7 @@ export function ServiceForm({ service }: ServiceFormProps) {
         <Button
           type="submit"
           disabled={isPending}
-          className="bg-[#B8860B] text-white hover:bg-[#996F09]"
+          className="bg-gold text-white hover:bg-gold-hover"
         >
           {isPending
             ? "Enregistrement..."

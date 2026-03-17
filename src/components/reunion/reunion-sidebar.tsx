@@ -49,7 +49,7 @@ function StatusIcon({
       return (
         <Circle
           className={`size-4 shrink-0 ${
-            isDarkMode ? "text-reunion-fg/30" : "text-[#E2E8F0]"
+            isDarkMode ? "text-reunion-fg/30" : "text-border"
           }`}
         />
       );
@@ -85,7 +85,7 @@ export function ReunionSidebar({
           <SheetTitle
             className={isDarkMode ? "text-reunion-fg" : ""}
           >
-            Témoignages
+            Temoignages
           </SheetTitle>
           <SheetDescription
             className={isDarkMode ? "text-reunion-fg/60" : ""}
@@ -107,8 +107,8 @@ export function ReunionSidebar({
                     className={`flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-colors ${
                       isCurrent
                         ? isDarkMode
-                          ? "bg-white/10 ring-1 ring-[#B8860B]"
-                          : "bg-[#B8860B]/5 ring-1 ring-[#B8860B]"
+                          ? "bg-white/10 ring-1 ring-gold"
+                          : "bg-gold/5 ring-1 ring-gold"
                         : isDarkMode
                           ? "hover:bg-white/5"
                           : "hover:bg-muted/50"
@@ -117,7 +117,7 @@ export function ReunionSidebar({
                     <span
                       className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
                         isCurrent
-                          ? "bg-[#B8860B] text-white"
+                          ? "bg-gold text-white"
                           : isDarkMode
                             ? "bg-white/10 text-reunion-fg/70"
                             : "bg-muted text-muted-foreground"
@@ -129,7 +129,7 @@ export function ReunionSidebar({
                     <div className="min-w-0 flex-1">
                       <p
                         className={`text-sm font-medium truncate ${
-                          isDarkMode ? "text-reunion-fg" : "text-[#0A0A0A]"
+                          isDarkMode ? "text-reunion-fg" : "text-foreground"
                         }`}
                       >
                         {testimony.witnessName}

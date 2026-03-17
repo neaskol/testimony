@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 
 const LANGUAGE_LABELS: Record<string, string> = {
-  fr: "Francais",
+  fr: "Français",
   mg: "Malgache",
 };
 
@@ -98,10 +98,10 @@ export default async function TestimonyDetailPage({ params }: PageProps) {
           {testimony.summary && (
             <div>
               <h3 className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                <FileTextIcon className="size-3 text-[#B8860B]" />
+                <FileTextIcon className="size-3 text-gold" />
                 Résumé
               </h3>
-              <div className="rounded-lg border border-[#B8860B]/20 bg-[#B8860B]/5 p-4">
+              <div className="rounded-lg border border-gold/20 bg-gold/5 p-4">
                 <p className="text-sm leading-relaxed">
                   {testimony.summary}
                 </p>

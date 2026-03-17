@@ -24,7 +24,7 @@ export default async function ServicesPage() {
           </p>
         </div>
         <Link href="/admin/services/new">
-          <Button className="bg-[#B8860B] text-white hover:bg-[#996F09]">
+          <Button>
             <Plus className="size-4" />
             Nouvelle réunion
           </Button>
