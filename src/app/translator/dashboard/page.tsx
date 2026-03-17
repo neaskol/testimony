@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/actions/auth";
-import { getMyAssignments } from "@/actions/translations";
+import { getMyAssignments, getMyTranslationStats } from "@/actions/translations";
 import { getTranslatorPlans } from "@/actions/plans";
 import { StatusBadge } from "@/components/testimonies/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,24 +20,19 @@ export default async function TranslatorDashboard() {
   const { data: profile, error } = await getCurrentProfile();
   if (error || !profile) redirect("/login");
 
-  const [{ data: assignments }, { data: plans }] = await Promise.all([
-    getMyAssignments(),
-    getTranslatorPlans(),
-  ]);
+  const [{ data: assignments }, { data: plans }, { data: stats }] =
+    await Promise.all([
+      getMyAssignments(),
+      getTranslatorPlans(),
+      getMyTranslationStats(),
+    ]);
   const allAssignments = assignments ?? [];
   const allPlans = plans ?? [];
 
   // Compute stats
   const totalAssignments = allAssignments.length;
-  const inProgressCount = allAssignments.filter(
-    (a) => a.testimony.status === "in_translation"
-  ).length;
-  const translatedCount = allAssignments.filter(
-    (a) =>
-      a.testimony.status === "translated" ||
-      a.testimony.status === "planned" ||
-      a.testimony.status === "read"
-  ).length;
+  const inProgressCount = stats?.inProgressCount ?? 0;
+  const translatedCount = stats?.translatedCount ?? 0;
 
   // Recent assignments (last 5)
   const recentAssignments = allAssignments.slice(0, 5);

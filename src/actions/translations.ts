@@ -256,3 +256,65 @@ export async function markTranslationComplete(
   revalidatePath("/translator/dashboard");
   return { data: undefined, error: null };
 }
+
+/**
+ * Get translation stats for the current translator:
+ * how many assignments have a non-empty translation by this translator.
+ */
+export async function getMyTranslationStats(): Promise<
+  ActionResult<{ translatedCount: number; inProgressCount: number }>
+> {
+  const profileResult = await requireRole([
+    "translator",
+    "superadmin",
+    "admin",
+  ]);
+  if (profileResult.error) return { data: null, error: profileResult.error };
+
+  const profile = profileResult.data!;
+  const supabase = await createClient();
+
+  // Get all translations by this translator
+  const { data: translations, error } = await supabase
+    .from("translations")
+    .select("id, content, testimony_id")
+    .eq("translator_id", profile.id);
+
+  if (error) {
+    return { data: null, error: error.message };
+  }
+
+  // Get testimony IDs that have been marked as translated by this translator
+  // (via markTranslationComplete)
+  const { data: assignments } = await supabase
+    .from("assignments")
+    .select("testimony_id, testimony:testimonies(status)")
+    .eq("translator_id", profile.id);
+
+  const completedTestimonyIds = new Set(
+    (assignments ?? [])
+      .filter(
+        (a) => {
+          const testimony = a.testimony as unknown as { status: string } | null;
+          return testimony?.status === "translated" ||
+            testimony?.status === "planned" ||
+            testimony?.status === "read";
+        }
+      )
+      .map((a) => a.testimony_id)
+  );
+
+  // A translation is "completed" only if this translator has a non-empty
+  // translation AND the testimony status reflects completion
+  const translatedCount = (translations ?? []).filter(
+    (t) => t.content?.trim() && completedTestimonyIds.has(t.testimony_id)
+  ).length;
+
+  // "In progress" = translator has started writing (non-empty translation)
+  // but testimony is still in_translation status
+  const inProgressCount = (translations ?? []).filter(
+    (t) => t.content?.trim() && !completedTestimonyIds.has(t.testimony_id)
+  ).length;
+
+  return { data: { translatedCount, inProgressCount }, error: null };
+}

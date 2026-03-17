@@ -159,41 +159,37 @@ export function TranslationEditor({
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm text-muted-foreground">
-          La traduction est sauvegardée automatiquement.
-        </div>
-        <div className="flex items-center gap-3">
-          {markError && (
-            <p className="text-sm text-destructive">{markError}</p>
-          )}
-          {markSuccess && (
-            <p className="flex items-center gap-1 text-sm text-success">
+      <div className="flex flex-col gap-3 border-t border-border pt-4">
+        {markError && (
+          <p className="text-sm text-destructive">{markError}</p>
+        )}
+        {markSuccess && (
+          <p className="flex items-center gap-1 text-sm text-success">
+            <CheckCircle className="size-4" />
+            Marqué comme traduit
+          </p>
+        )}
+        {!isAlreadyTranslated && (
+          <Button
+            onClick={handleMarkComplete}
+            disabled={isPending || !content.trim()}
+            size="lg"
+            className="w-full bg-gold text-white hover:bg-gold-hover"
+          >
+            {isPending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
               <CheckCircle className="size-4" />
-              Marqué comme traduit
-            </p>
-          )}
-          {!isAlreadyTranslated && (
-            <Button
-              onClick={handleMarkComplete}
-              disabled={isPending || !content.trim()}
-              className="bg-gold text-white hover:bg-gold-hover"
-            >
-              {isPending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <CheckCircle className="size-4" />
-              )}
-              Marquer comme traduit
-            </Button>
-          )}
-          {isAlreadyTranslated && (
-            <span className="flex items-center gap-1 text-sm font-medium text-success">
-              <CheckCircle className="size-4" />
-              Traduction terminée
-            </span>
-          )}
-        </div>
+            )}
+            Marquer comme traduit
+          </Button>
+        )}
+        {isAlreadyTranslated && (
+          <div className="flex items-center justify-center gap-2 rounded-lg border border-success/20 bg-success/5 py-3 text-sm font-medium text-success">
+            <CheckCircle className="size-4" />
+            Traduction terminée
+          </div>
+        )}
       </div>
     </div>
   );

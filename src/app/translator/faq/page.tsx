@@ -7,13 +7,23 @@ import {
 
 const faqSections = [
   {
+    title: "Tableau de bord",
+    items: [
+      {
+        question: "Que contient mon tableau de bord ?",
+        answer:
+          "Votre tableau de bord affiche un résumé de votre activité : le nombre de témoignages qui vous sont assignés, le nombre de plannings de lecture auxquels vous participez, et vos traductions en cours. C'est votre point de départ pour accéder rapidement à votre travail.",
+      },
+    ],
+  },
+  {
     title: "Mes témoignages",
     items: [
       {
         question:
           "Comment voir les témoignages qui me sont assignés ?",
         answer:
-          "Rendez-vous dans l'onglet Témoignages. Vous y trouverez la liste de tous les témoignages que le pasteur vous a assignés, avec leur statut actuel (En traduction, Traduit, etc.). Cliquez sur un témoignage pour voir son contenu complet et commencer ou poursuivre la traduction.",
+          "Rendez-vous dans l'onglet Témoignages. Vous y trouverez la liste de tous les témoignages que le pasteur vous a assignés, avec leur statut actuel (En traduction, Traduit, etc.) et le nom du témoin. Cliquez sur un témoignage pour voir son contenu complet et commencer ou poursuivre la traduction.",
       },
       {
         question: "Comment traduire un témoignage ?",
@@ -34,13 +44,19 @@ const faqSections = [
       {
         question: "Comment voir mes plannings de lecture ?",
         answer:
-          "Allez dans l'onglet Plannings pour voir la liste des plannings auxquels vous êtes assigné. Chaque planning est lié à une réunion et contient une liste ordonnée de témoignages à lire. Cliquez sur un planning pour voir les détails et préparer votre lecture.",
+          "Allez dans l'onglet Plannings ou consultez votre tableau de bord pour voir la liste des plannings auxquels vous êtes assigné. Chaque planning est lié à une réunion et contient une liste ordonnée de témoignages à lire. Cliquez sur un planning pour voir les détails et préparer votre lecture.",
       },
       {
         question:
           "Comment préparer ma lecture avant la réunion ?",
         answer:
-          "Ouvrez le planning concerné depuis l'onglet Plannings. Vous verrez la liste des témoignages dans l'ordre de lecture prévu, avec le contenu original et la traduction pour chacun. Relisez chaque témoignage et sa traduction pour vous familiariser avec le texte avant le jour de la réunion.",
+          "Ouvrez le planning concerné depuis l'onglet Plannings. Vous verrez la liste des témoignages dans l'ordre de lecture prévu, avec le nom du témoin pour chacun. Cliquez sur un témoignage pour lire son contenu complet et vous familiariser avec le texte avant le jour de la réunion.",
+      },
+      {
+        question:
+          "Qu'est-ce que la langue de lecture ?",
+        answer:
+          "Lorsque le pasteur vous assigne à un planning, il choisit votre langue de lecture (français ou malgache). En Mode Réunion, vous verrez les témoignages dans cette langue. Par exemple, si votre langue de lecture est le malgache, vous verrez les textes originaux en malgache pour les lire en public.",
       },
     ],
   },
@@ -55,7 +71,13 @@ const faqSections = [
       {
         question: "Comment naviguer pendant la lecture ?",
         answer:
-          "En bas de l'écran, une barre fixe affiche le témoignage suivant et un indicateur de progression (ex: 3/7). Cliquez sur Suivant pour passer au prochain témoignage, ou sur Ignorer pour le sauter. Un menu latéral (accessible via le bouton en haut) affiche la liste complète et permet de sauter à n'importe quel témoignage.",
+          "En bas de l'écran, une barre fixe affiche le témoignage suivant et un indicateur de progression (ex: 3/7). Cliquez sur Suivant pour passer au prochain témoignage, ou sur Ignorer pour le sauter. Un menu latéral (accessible via le bouton en haut) affiche la liste complète avec des badges de langue et permet de sauter à n'importe quel témoignage.",
+      },
+      {
+        question:
+          "Comment les langues sont-elles affichées en Mode Réunion ?",
+        answer:
+          "Chaque témoignage en Mode Réunion affiche un badge de langue (FR ou MG) pour identifier dans quelle langue le texte est affiché. Les témoignages vous sont présentés dans votre langue de lecture assignée par le pasteur. Cela vous permet de savoir exactement dans quelle langue vous devez lire chaque témoignage.",
       },
       {
         question:
