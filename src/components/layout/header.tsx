@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 import { MobileNav } from "./mobile-nav";
 import type { Profile } from "@/lib/types";
 
@@ -49,6 +50,13 @@ export function Header({ profile }: { profile: Profile }) {
         <DropdownMenuContent align="end">
           <DropdownMenuItem className="text-muted-foreground" disabled>
             {profile.email}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            render={
+              <Link href={profile.role === "translator" ? "/translator/profile" : "/admin/profile"} />
+            }
+          >
+            Mon profil
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleSignOut}>
             Se déconnecter

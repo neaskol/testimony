@@ -16,6 +16,7 @@ const adminNav = [
   { label: "Plannings", href: "/admin/plans" },
   { label: "Traducteurs", href: "/admin/translators" },
   { label: "Aide / FAQ", href: "/admin/faq" },
+  { label: "Mon profil", href: "/admin/profile" },
 ];
 
 const translatorNav = [
@@ -23,6 +24,7 @@ const translatorNav = [
   { label: "Témoignages", href: "/translator/testimonies" },
   { label: "Plannings", href: "/translator/plans" },
   { label: "Aide / FAQ", href: "/translator/faq" },
+  { label: "Mon profil", href: "/translator/profile" },
 ];
 
 export function MobileNav({ role }: { role: Role }) {
