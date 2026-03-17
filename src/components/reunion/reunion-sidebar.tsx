@@ -95,7 +95,7 @@ export function ReunionSidebar({
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-4 pb-4">
-          <ul className="space-y-1">
+          <ul className="space-y-1 p-px">
             {testimonies.map((testimony, index) => {
               const isCurrent = index === currentIndex;
 
