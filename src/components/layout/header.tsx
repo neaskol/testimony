@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,9 +35,7 @@ export function Header({ profile }: { profile: Profile }) {
         <span className="text-sm text-muted-foreground">{roleLabel}</span>
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger
-          render={<Button variant="ghost" size="sm" className="gap-2" />}
-        >
+        <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 text-sm hover:bg-accent focus:outline-none">
           <span className="hidden sm:inline-block">{profile.full_name}</span>
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
             {profile.full_name
