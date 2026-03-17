@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { StatusBadge } from "@/components/testimonies/status-badge";
 import { createPlan, assignTranslatorToPlan } from "@/actions/plans";
-import type { Service, TestimonyWithWitness, Profile } from "@/lib/types";
+import type { Service, TestimonyWithWitness, Profile, LanguageCode } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 interface PlanBuilderProps {
@@ -43,6 +43,7 @@ export function PlanBuilder({
     []
   );
   const [selectedTranslatorId, setSelectedTranslatorId] = useState<string>("");
+  const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>("mg");
   const [error, setError] = useState<string | null>(null);
 
   // Testimonies already in the plan
@@ -108,7 +109,7 @@ export function PlanBuilder({
 
       // Assign translator if selected
       if (selectedTranslatorId && result.data) {
-        await assignTranslatorToPlan(result.data.id, selectedTranslatorId);
+        await assignTranslatorToPlan(result.data.id, selectedTranslatorId, selectedLanguage);
       }
 
       router.push(`/admin/plans/${result.data!.id}`);
@@ -282,21 +283,41 @@ export function PlanBuilder({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Select
-              value={selectedTranslatorId}
-              onValueChange={(v) => setSelectedTranslatorId(v ?? "")}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Sélectionner un traducteur (optionnel)..." />
-              </SelectTrigger>
-              <SelectContent>
-                {translators.map((translator) => (
-                  <SelectItem key={translator.id} value={translator.id}>
-                    {translator.full_name} ({translator.email})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <Select
+                  value={selectedTranslatorId}
+                  onValueChange={(v) => setSelectedTranslatorId(v ?? "")}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selectionner un traducteur (optionnel)..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {translators.map((translator) => (
+                      <SelectItem key={translator.id} value={translator.id}>
+                        {translator.full_name} ({translator.email})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedTranslatorId && (
+                <div className="w-32 shrink-0">
+                  <Select
+                    value={selectedLanguage}
+                    onValueChange={(v) => setSelectedLanguage((v as LanguageCode) ?? "mg")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="mg">Malgache</SelectItem>
+                      <SelectItem value="fr">Francais</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       )}

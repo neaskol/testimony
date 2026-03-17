@@ -111,6 +111,7 @@ export interface ReadingPlanAssignment {
   id: string;
   plan_id: string;
   translator_id: string;
+  reading_language: LanguageCode;
 }
 
 export interface ReadingOccasion {
@@ -151,7 +152,8 @@ export interface ReunionTestimony {
   id: string;
   witnessName: string;
   content: string;
-  translatedContent?: string;
+  originalContent?: string;
+  sourceLanguage: LanguageCode;
   status: "pending" | "read" | "skipped";
 }
 

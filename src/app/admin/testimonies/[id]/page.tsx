@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
-import { requireRole } from "@/actions/auth";
+import { requireRole, getMyTranslators } from "@/actions/auth";
 import { getTestimony } from "@/actions/testimonies";
+import { getTestimonyAssignments } from "@/actions/assignments";
 import { formatDate } from "@/lib/utils";
 import { StatusBadge } from "@/components/testimonies/status-badge";
 import { TestimonyActions } from "@/components/testimonies/testimony-actions";
+import { TestimonyAssignment } from "@/components/testimonies/testimony-assignment";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,6 +23,7 @@ import {
   LockIcon,
   LanguagesIcon,
   FileTextIcon,
+  UsersIcon,
 } from "lucide-react";
 
 const LANGUAGE_LABELS: Record<string, string> = {
@@ -40,7 +43,14 @@ export default async function TestimonyDetailPage({ params }: PageProps) {
   if (authError || !profile) redirect("/login");
 
   const { id } = await params;
-  const { data: testimony, error } = await getTestimony(id);
+  const [testimonyResult, assignmentsResult, translatorsResult] =
+    await Promise.all([
+      getTestimony(id),
+      getTestimonyAssignments(id),
+      getMyTranslators(),
+    ]);
+
+  const { data: testimony, error } = testimonyResult;
 
   if (error || !testimony) {
     notFound();
@@ -167,6 +177,23 @@ export default async function TestimonyDetailPage({ params }: PageProps) {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Assignments */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 font-serif text-lg font-semibold">
+            <UsersIcon className="size-5" />
+            Assignation
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TestimonyAssignment
+            testimonyId={testimony.id}
+            assignments={assignmentsResult.data ?? []}
+            translators={translatorsResult.data ?? []}
+          />
         </CardContent>
       </Card>
 

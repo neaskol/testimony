@@ -29,23 +29,23 @@ export default async function AdminReunionPage({
 
   const { plan, testimonies } = data;
 
-  // Fetch translations for all testimonies in this plan
+  // Fetch FR translations for MG testimonies
   const supabase = await createClient();
   const testimonyIds = testimonies.map((t) => t.id);
 
-  const translationsMap = new Map<string, string>();
+  const frTranslationsMap = new Map<string, string>();
 
   if (testimonyIds.length > 0) {
     const { data: translations } = await supabase
       .from("translations")
       .select("*")
-      .in("testimony_id", testimonyIds);
+      .in("testimony_id", testimonyIds)
+      .eq("target_language", "fr");
 
     if (translations) {
       for (const t of translations as Translation[]) {
-        // Use the first translation found for each testimony
-        if (!translationsMap.has(t.testimony_id)) {
-          translationsMap.set(t.testimony_id, t.content);
+        if (!frTranslationsMap.has(t.testimony_id)) {
+          frTranslationsMap.set(t.testimony_id, t.content);
         }
       }
     }
@@ -56,19 +56,47 @@ export default async function AdminReunionPage({
   const readStatusMap = new Map<string, "read" | "skipped">();
   if (readingHistory) {
     for (const occasion of readingHistory) {
-      // Last status wins
       readStatusMap.set(occasion.testimony_id, occasion.status);
     }
   }
 
-  // Build ReunionTestimony array
-  const reunionTestimonies: ReunionTestimony[] = testimonies.map((testimony) => ({
-    id: testimony.id,
-    witnessName: testimony.witness?.full_name ?? "Temoin anonyme",
-    content: testimony.content ?? "",
-    translatedContent: translationsMap.get(testimony.id) || undefined,
-    status: readStatusMap.get(testimony.id) ?? "pending",
-  }));
+  // Build ReunionTestimony array — pasteur reads in FR
+  const reunionTestimonies: ReunionTestimony[] = testimonies.map((testimony) => {
+    const sourceLanguage = testimony.source_language;
+
+    if (sourceLanguage === "fr") {
+      // Original is FR — pasteur reads it directly
+      return {
+        id: testimony.id,
+        witnessName: testimony.witness?.full_name ?? "Temoin anonyme",
+        content: testimony.content ?? "",
+        sourceLanguage,
+        status: readStatusMap.get(testimony.id) ?? "pending",
+      };
+    }
+
+    // Original is MG — use FR translation if available
+    const frTranslation = frTranslationsMap.get(testimony.id);
+    if (frTranslation) {
+      return {
+        id: testimony.id,
+        witnessName: testimony.witness?.full_name ?? "Temoin anonyme",
+        content: frTranslation,
+        originalContent: testimony.content ?? undefined,
+        sourceLanguage,
+        status: readStatusMap.get(testimony.id) ?? "pending",
+      };
+    }
+
+    // No FR translation — show MG original (pasteur can still see it)
+    return {
+      id: testimony.id,
+      witnessName: testimony.witness?.full_name ?? "Temoin anonyme",
+      content: testimony.content ?? "",
+      sourceLanguage,
+      status: readStatusMap.get(testimony.id) ?? "pending",
+    };
+  });
 
   return (
     <ReunionView
@@ -77,6 +105,7 @@ export default async function AdminReunionPage({
       service={plan.service}
       initialTestimonies={reunionTestimonies}
       backUrl={`/admin/plans/${id}`}
+      showOriginalToggle
     />
   );
 }

@@ -6,11 +6,16 @@ import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/actions/auth";
 import type {
   ActionResult,
+  LanguageCode,
   ReadingPlan,
   ReadingPlanWithService,
   TestimonyWithWitness,
   Profile,
 } from "@/lib/types";
+
+export interface TranslatorWithLanguage extends Profile {
+  reading_language: LanguageCode;
+}
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -54,7 +59,7 @@ export async function getPlan(id: string): Promise<
   ActionResult<{
     plan: ReadingPlanWithService;
     testimonies: TestimonyWithWitness[];
-    translators: Profile[];
+    translators: TranslatorWithLanguage[];
   }>
 > {
   const profileResult = await requireRole(["superadmin", "admin"]);
@@ -100,13 +105,13 @@ export async function getPlan(id: string): Promise<
     }
   }
 
-  // Fetch assigned translators
+  // Fetch assigned translators with their reading language
   const { data: assignments } = await supabase
     .from("reading_plan_assignments")
-    .select("translator_id")
+    .select("translator_id, reading_language")
     .eq("plan_id", id);
 
-  let translators: Profile[] = [];
+  let translators: TranslatorWithLanguage[] = [];
   if (assignments && assignments.length > 0) {
     const translatorIds = assignments.map((a) => a.translator_id);
     const { data: translatorData } = await supabase
@@ -115,7 +120,13 @@ export async function getPlan(id: string): Promise<
       .in("id", translatorIds);
 
     if (translatorData) {
-      translators = translatorData as Profile[];
+      const langMap = new Map(
+        assignments.map((a) => [a.translator_id, a.reading_language as LanguageCode])
+      );
+      translators = (translatorData as Profile[]).map((t) => ({
+        ...t,
+        reading_language: langMap.get(t.id) ?? "mg",
+      }));
     }
   }
 
@@ -233,7 +244,8 @@ export async function deletePlan(id: string): Promise<ActionResult> {
 
 export async function assignTranslatorToPlan(
   planId: string,
-  translatorId: string
+  translatorId: string,
+  readingLanguage: LanguageCode = "mg"
 ): Promise<ActionResult> {
   const profileResult = await requireRole(["superadmin", "admin"]);
   if (profileResult.error) return { data: null, error: profileResult.error };
@@ -242,7 +254,7 @@ export async function assignTranslatorToPlan(
 
   const { error } = await supabase
     .from("reading_plan_assignments")
-    .insert({ plan_id: planId, translator_id: translatorId });
+    .insert({ plan_id: planId, translator_id: translatorId, reading_language: readingLanguage });
 
   if (error) {
     if (error.code === "23505") {
@@ -324,6 +336,7 @@ export async function getTranslatorPlan(id: string): Promise<
   ActionResult<{
     plan: ReadingPlanWithService;
     testimonies: TestimonyWithWitness[];
+    readingLanguage: LanguageCode;
   }>
 > {
   const profileResult = await requireRole(["superadmin", "translator"]);
@@ -332,11 +345,12 @@ export async function getTranslatorPlan(id: string): Promise<
   const profile = profileResult.data!;
   const supabase = await createClient();
 
-  // Verify translator is assigned to this plan
+  // Verify translator is assigned to this plan and get reading language
+  let readingLanguage: LanguageCode = "mg";
   if (profile.role !== "superadmin") {
     const { data: assignment } = await supabase
       .from("reading_plan_assignments")
-      .select("id")
+      .select("id, reading_language")
       .eq("plan_id", id)
       .eq("translator_id", profile.id)
       .single();
@@ -344,6 +358,7 @@ export async function getTranslatorPlan(id: string): Promise<
     if (!assignment) {
       return { data: null, error: "Acces non autorise" };
     }
+    readingLanguage = (assignment.reading_language as LanguageCode) ?? "mg";
   }
 
   // Fetch plan with service
@@ -377,7 +392,7 @@ export async function getTranslatorPlan(id: string): Promise<
   }
 
   return {
-    data: { plan: typedPlan, testimonies },
+    data: { plan: typedPlan, testimonies, readingLanguage },
     error: null,
   };
 }

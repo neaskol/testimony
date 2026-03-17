@@ -15,6 +15,7 @@ interface ReunionViewProps {
   service: Service;
   initialTestimonies: ReunionTestimony[];
   backUrl: string;
+  showOriginalToggle?: boolean;
 }
 
 export function ReunionView({
@@ -23,6 +24,7 @@ export function ReunionView({
   service,
   initialTestimonies,
   backUrl,
+  showOriginalToggle = false,
 }: ReunionViewProps) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -82,6 +84,7 @@ export function ReunionView({
         <ReunionTestimonyView
           testimony={currentTestimony}
           isDarkMode={reunion.isDarkMode}
+          showOriginalToggle={showOriginalToggle}
         />
       </main>
 

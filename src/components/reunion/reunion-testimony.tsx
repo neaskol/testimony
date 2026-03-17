@@ -1,30 +1,51 @@
 "use client";
 
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import type { ReunionTestimony } from "@/lib/types";
 
 interface ReunionTestimonyViewProps {
   testimony: ReunionTestimony;
   isDarkMode: boolean;
+  showOriginalToggle?: boolean;
 }
 
 export function ReunionTestimonyView({
   testimony,
   isDarkMode,
+  showOriginalToggle = false,
 }: ReunionTestimonyViewProps) {
-  const hasTranslation =
-    testimony.translatedContent && testimony.translatedContent.trim().length > 0;
+  const [showOriginal, setShowOriginal] = useState(false);
+
+  const hasOriginal =
+    showOriginalToggle &&
+    testimony.originalContent &&
+    testimony.originalContent.trim().length > 0;
+
+  const langLabel = testimony.sourceLanguage === "mg" ? "MG" : "FR";
 
   return (
     <article className="space-y-6">
-      {/* Witness name */}
+      {/* Witness name + language badge */}
       <header>
-        <h2
-          className={`font-serif text-2xl font-bold leading-tight ${
-            isDarkMode ? "text-reunion-fg" : "text-foreground"
-          }`}
-        >
-          {testimony.witnessName}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2
+            className={`font-serif text-2xl font-bold leading-tight ${
+              isDarkMode ? "text-reunion-fg" : "text-foreground"
+            }`}
+          >
+            {testimony.witnessName}
+          </h2>
+          <span
+            className={`inline-flex shrink-0 items-center rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
+              isDarkMode
+                ? "bg-white/10 text-reunion-fg/70"
+                : "bg-muted text-muted-foreground"
+            }`}
+          >
+            {langLabel}
+          </span>
+        </div>
         {testimony.status !== "pending" && (
           <span
             className={`mt-1 inline-block text-xs font-medium uppercase tracking-wider ${
@@ -42,17 +63,8 @@ export function ReunionTestimonyView({
         )}
       </header>
 
-      {/* Original content */}
+      {/* Main content (in the reader's language) */}
       <section>
-        {hasTranslation && (
-          <p
-            className={`mb-2 text-xs font-medium uppercase tracking-wider ${
-              isDarkMode ? "text-reunion-fg/50" : "text-muted-foreground"
-            }`}
-          >
-            Texte original
-          </p>
-        )}
         <div
           className={`whitespace-pre-wrap text-lg leading-[1.75] ${
             isDarkMode ? "text-reunion-fg/90" : "text-foreground"
@@ -70,31 +82,43 @@ export function ReunionTestimonyView({
         </div>
       </section>
 
-      {/* Translated content */}
-      {hasTranslation && (
+      {/* Toggle to show original text (admin only, for MG testimonies with FR translation) */}
+      {hasOriginal && (
         <>
-          <div
-            className={`border-t ${
-              isDarkMode ? "border-white/10" : "border-border"
+          <button
+            type="button"
+            onClick={() => setShowOriginal((prev) => !prev)}
+            className={`flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider transition-colors ${
+              isDarkMode
+                ? "text-reunion-fg/50 hover:text-reunion-fg/70"
+                : "text-muted-foreground hover:text-foreground"
             }`}
-          />
+          >
+            {showOriginal ? (
+              <ChevronUp className="size-3.5" />
+            ) : (
+              <ChevronDown className="size-3.5" />
+            )}
+            Texte original ({langLabel})
+          </button>
 
-          <section>
-            <p
-              className={`mb-2 text-xs font-medium uppercase tracking-wider ${
-                isDarkMode ? "text-reunion-fg/50" : "text-muted-foreground"
-              }`}
-            >
-              Traduction
-            </p>
-            <div
-              className={`whitespace-pre-wrap text-lg leading-[1.75] ${
-                isDarkMode ? "text-reunion-fg" : "text-foreground"
-              }`}
-            >
-              {testimony.translatedContent}
-            </div>
-          </section>
+          {showOriginal && (
+            <section>
+              <div
+                className={`border-t pt-4 ${
+                  isDarkMode ? "border-white/10" : "border-border"
+                }`}
+              >
+                <div
+                  className={`whitespace-pre-wrap text-base leading-[1.75] ${
+                    isDarkMode ? "text-reunion-fg/60" : "text-muted-foreground"
+                  }`}
+                >
+                  {testimony.originalContent}
+                </div>
+              </div>
+            </section>
+          )}
         </>
       )}
     </article>

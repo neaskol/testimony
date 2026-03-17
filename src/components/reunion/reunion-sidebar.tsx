@@ -127,13 +127,24 @@ export function ReunionSidebar({
                     </span>
 
                     <div className="min-w-0 flex-1">
-                      <p
-                        className={`text-sm font-medium truncate ${
-                          isDarkMode ? "text-reunion-fg" : "text-foreground"
-                        }`}
-                      >
-                        {testimony.witnessName}
-                      </p>
+                      <div className="flex items-center gap-1.5">
+                        <p
+                          className={`text-sm font-medium truncate ${
+                            isDarkMode ? "text-reunion-fg" : "text-foreground"
+                          }`}
+                        >
+                          {testimony.witnessName}
+                        </p>
+                        <span
+                          className={`shrink-0 rounded px-1 py-px text-[9px] font-semibold uppercase ${
+                            isDarkMode
+                              ? "bg-white/10 text-reunion-fg/50"
+                              : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {testimony.sourceLanguage === "mg" ? "MG" : "FR"}
+                        </span>
+                      </div>
                     </div>
 
                     <StatusIcon

@@ -26,7 +26,8 @@ import {
   assignTranslatorToPlan,
   unassignTranslatorFromPlan,
 } from "@/actions/plans";
-import type { Profile } from "@/lib/types";
+import type { Profile, LanguageCode } from "@/lib/types";
+import type { TranslatorWithLanguage } from "@/actions/plans";
 
 // ---------------------------------------------------------------------------
 // Delete plan button
@@ -90,7 +91,7 @@ export function DeletePlanButton({ planId }: { planId: string }) {
 
 interface TranslatorAssignmentProps {
   planId: string;
-  assignedTranslators: Profile[];
+  assignedTranslators: TranslatorWithLanguage[];
   availableTranslators: Profile[];
 }
 
@@ -100,6 +101,7 @@ export function TranslatorAssignment({
   availableTranslators,
 }: TranslatorAssignmentProps) {
   const [selectedId, setSelectedId] = useState<string>("");
+  const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>("mg");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -112,11 +114,12 @@ export function TranslatorAssignment({
     if (!selectedId) return;
     setError(null);
     startTransition(async () => {
-      const result = await assignTranslatorToPlan(planId, selectedId);
+      const result = await assignTranslatorToPlan(planId, selectedId, selectedLanguage);
       if (result.error) {
         setError(result.error);
       } else {
         setSelectedId("");
+        setSelectedLanguage("mg");
       }
     });
   }
@@ -143,11 +146,16 @@ export function TranslatorAssignment({
               key={translator.id}
               className="flex items-center justify-between rounded-md border border-border p-3"
             >
-              <div>
-                <p className="text-sm font-medium">{translator.full_name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {translator.email}
-                </p>
+              <div className="flex items-center gap-2">
+                <div>
+                  <p className="text-sm font-medium">{translator.full_name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {translator.email}
+                  </p>
+                </div>
+                <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase text-muted-foreground">
+                  {translator.reading_language === "mg" ? "Malgache" : "Francais"}
+                </span>
               </div>
               <Button
                 variant="ghost"
@@ -165,7 +173,7 @@ export function TranslatorAssignment({
 
       {assignedTranslators.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          Aucun traducteur assigné.
+          Aucun traducteur assigne.
         </p>
       )}
 
@@ -183,6 +191,17 @@ export function TranslatorAssignment({
                     {translator.full_name}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-32 shrink-0">
+            <Select value={selectedLanguage} onValueChange={(v) => setSelectedLanguage((v as LanguageCode) ?? "mg")}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="mg">Malgache</SelectItem>
+                <SelectItem value="fr">Francais</SelectItem>
               </SelectContent>
             </Select>
           </div>
