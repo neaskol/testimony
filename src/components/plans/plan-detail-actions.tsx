@@ -183,11 +183,17 @@ export function TranslatorAssignment({
           <div className="flex-1">
             <Select value={selectedId} onValueChange={(v) => setSelectedId(v ?? "")}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Ajouter un traducteur..." />
+                <SelectValue placeholder="Ajouter un traducteur...">
+                  {(value) => {
+                    if (!value) return null;
+                    const t = unassigned.find((tr) => tr.id === value);
+                    return t?.full_name ?? value;
+                  }}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {unassigned.map((translator) => (
-                  <SelectItem key={translator.id} value={translator.id} label={translator.full_name}>
+                  <SelectItem key={translator.id} value={translator.id}>
                     {translator.full_name}
                   </SelectItem>
                 ))}

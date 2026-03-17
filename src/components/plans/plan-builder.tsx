@@ -137,11 +137,17 @@ export function PlanBuilder({
             onValueChange={(v) => setSelectedServiceId(v ?? "")}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Sélectionner une réunion..." />
+              <SelectValue placeholder="Sélectionner une réunion...">
+                {(value) => {
+                  if (!value) return null;
+                  const s = services.find((sv) => sv.id === value);
+                  return s ? `${formatDate(s.service_date)} — ${s.title}` : value;
+                }}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {services.map((service) => (
-                <SelectItem key={service.id} value={service.id} label={`${formatDate(service.service_date)} — ${service.title}`}>
+                <SelectItem key={service.id} value={service.id}>
                   {formatDate(service.service_date)} — {service.title}
                 </SelectItem>
               ))}
@@ -290,11 +296,17 @@ export function PlanBuilder({
                   onValueChange={(v) => setSelectedTranslatorId(v ?? "")}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selectionner un traducteur (optionnel)..." />
+                    <SelectValue placeholder="Selectionner un traducteur (optionnel)...">
+                      {(value) => {
+                        if (!value) return null;
+                        const t = translators.find((tr) => tr.id === value);
+                        return t ? `${t.full_name} (${t.email})` : value;
+                      }}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {translators.map((translator) => (
-                      <SelectItem key={translator.id} value={translator.id} label={`${translator.full_name} (${translator.email})`}>
+                      <SelectItem key={translator.id} value={translator.id}>
                         {translator.full_name} ({translator.email})
                       </SelectItem>
                     ))}
