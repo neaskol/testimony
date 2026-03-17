@@ -130,6 +130,30 @@ export async function getMyTranslators(): Promise<ActionResult<Profile[]>> {
   return { data: data as Profile[], error: null };
 }
 
+export async function updateMyName(
+  fullName: string
+): Promise<ActionResult<null>> {
+  const profileResult = await getCurrentProfile();
+  if (profileResult.error) return { data: null, error: profileResult.error };
+
+  const trimmed = fullName.trim();
+  if (!trimmed) {
+    return { data: null, error: "Le nom ne peut pas être vide" };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ full_name: trimmed })
+    .eq("id", profileResult.data!.id);
+
+  if (error) {
+    return { data: null, error: error.message };
+  }
+
+  return { data: null, error: null };
+}
+
 export async function signOut(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();

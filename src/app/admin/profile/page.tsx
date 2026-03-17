@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/actions/auth";
 import { Separator } from "@/components/ui/separator";
+import { NameForm } from "@/components/profile/name-form";
 import { PasswordForm } from "@/components/profile/password-form";
 
 export default async function AdminProfilePage() {
@@ -29,10 +30,6 @@ export default async function AdminProfilePage() {
         <h2 className="font-serif text-lg font-semibold">Informations</h2>
         <dl className="mt-4 space-y-3">
           <div className="flex items-baseline gap-2">
-            <dt className="text-sm text-muted-foreground w-24">Nom</dt>
-            <dd className="text-sm font-medium">{profile.full_name}</dd>
-          </div>
-          <div className="flex items-baseline gap-2">
             <dt className="text-sm text-muted-foreground w-24">Email</dt>
             <dd className="text-sm font-medium">{profile.email}</dd>
           </div>
@@ -41,6 +38,17 @@ export default async function AdminProfilePage() {
             <dd className="text-sm font-medium">{roleLabel}</dd>
           </div>
         </dl>
+      </section>
+
+      <Separator />
+
+      <section className="space-y-4">
+        <h2 className="font-serif text-lg font-semibold">
+          Modifier le nom
+        </h2>
+        <div className="rounded-lg border border-border bg-card p-6 max-w-md">
+          <NameForm currentName={profile.full_name} />
+        </div>
       </section>
 
       <Separator />
