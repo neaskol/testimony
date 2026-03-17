@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
 import { getCurrentProfile, getMyTranslators } from "@/actions/auth";
 import { InviteTranslatorForm } from "@/components/translators/invite-form";
-import { ResendInviteButton } from "@/components/translators/resend-invite-button";
+import { DeleteTranslatorButton } from "@/components/translators/delete-translator-button";
 import { Separator } from "@/components/ui/separator";
 import {
   Table,
@@ -28,14 +28,14 @@ export default async function TranslatorsPage() {
           Traducteurs
         </h1>
         <p className="text-sm text-muted-foreground">
-          Invitez et gérez vos traducteurs.
+          Créez et gérez les comptes de vos traducteurs.
         </p>
       </div>
 
-      {/* Invite form */}
+      {/* Create form */}
       <section className="space-y-4">
         <h2 className="font-serif text-lg font-semibold">
-          Inviter un traducteur
+          Créer un compte traducteur
         </h2>
         <div className="rounded-lg border border-border bg-card p-6">
           <InviteTranslatorForm />
@@ -61,7 +61,7 @@ export default async function TranslatorsPage() {
               Aucun traducteur
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Invitez un traducteur via le formulaire ci-dessus.
+              Créez un compte traducteur via le formulaire ci-dessus.
             </p>
           </div>
         )}
@@ -74,7 +74,7 @@ export default async function TranslatorsPage() {
                   <TableHead>Nom</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Rôle</TableHead>
-                  <TableHead>Inscrit le</TableHead>
+                  <TableHead>Créé le</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -96,7 +96,10 @@ export default async function TranslatorsPage() {
                       {formatDate(translator.created_at)}
                     </TableCell>
                     <TableCell>
-                      <ResendInviteButton userId={translator.id} />
+                      <DeleteTranslatorButton
+                        userId={translator.id}
+                        userName={translator.full_name}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}

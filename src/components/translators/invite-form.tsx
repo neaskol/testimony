@@ -3,14 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { inviteTranslator } from "@/actions/auth";
+import { createTranslator } from "@/actions/auth";
 
 export function InviteTranslatorForm() {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,14 +21,21 @@ export function InviteTranslatorForm() {
     const formData = new FormData(e.currentTarget);
     const email = (formData.get("email") as string).trim();
     const fullName = (formData.get("full_name") as string).trim();
+    const password = formData.get("password") as string;
 
-    if (!email || !fullName) {
-      toast.error("L'email et le nom complet sont requis.");
+    if (!email || !fullName || !password) {
+      toast.error("Tous les champs sont requis.");
       setIsPending(false);
       return;
     }
 
-    const result = await inviteTranslator(email, fullName);
+    if (password.length < 6) {
+      toast.error("Le mot de passe doit contenir au moins 6 caractères.");
+      setIsPending(false);
+      return;
+    }
+
+    const result = await createTranslator(email, fullName, password);
     setIsPending(false);
 
     if (result.error) {
@@ -34,7 +43,7 @@ export function InviteTranslatorForm() {
       return;
     }
 
-    toast.success("Invitation envoyée avec succès");
+    toast.success("Compte traducteur créé avec succès");
     e.currentTarget.reset();
     router.refresh();
   }
@@ -62,12 +71,37 @@ export function InviteTranslatorForm() {
           />
         </div>
       </div>
+      <div className="max-w-sm space-y-2">
+        <Label htmlFor="password">Mot de passe</Label>
+        <div className="relative">
+          <Input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            required
+            minLength={6}
+            placeholder="Min. 6 caractères"
+            className="pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Communiquez ces identifiants au traducteur pour qu&apos;il puisse se connecter.
+        </p>
+      </div>
       <Button
         type="submit"
         disabled={isPending}
         className="bg-[#B8860B] text-white hover:bg-[#996F09]"
       >
-        {isPending ? "Envoi en cours..." : "Inviter le traducteur"}
+        {isPending ? "Création en cours..." : "Créer le compte traducteur"}
       </Button>
     </form>
   );
