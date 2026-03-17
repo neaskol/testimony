@@ -102,8 +102,9 @@ export default async function TranslatorPlanDetailPage({
         ) : (
           <div className="space-y-2">
             {testimonies.map((testimony, index) => (
-              <div
+              <Link
                 key={testimony.id}
+                href={`/translator/testimonies/${testimony.id}`}
                 className="flex items-center gap-3 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium">
@@ -121,7 +122,7 @@ export default async function TranslatorPlanDetailPage({
                   </p>
                 </div>
                 <StatusBadge status={testimony.status} />
-              </div>
+              </Link>
             ))}
           </div>
         )}
