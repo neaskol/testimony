@@ -11,9 +11,12 @@ export async function GET(request: Request) {
   const supabase = await createClient();
 
   if (code) {
-    // OAuth or PKCE flow
+    // PKCE flow
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      if (type === "invite") {
+        return NextResponse.redirect(new URL("/auth/set-password", origin));
+      }
       return NextResponse.redirect(new URL(next, origin));
     }
   }
@@ -26,18 +29,16 @@ export async function GET(request: Request) {
     });
 
     if (!error) {
-      // For invitations, redirect to set-password page
       if (type === "invite") {
-        return NextResponse.redirect(
-          new URL("/auth/set-password", origin)
-        );
+        return NextResponse.redirect(new URL("/auth/set-password", origin));
       }
       return NextResponse.redirect(new URL(next, origin));
     }
   }
 
-  // If we get here, something went wrong
+  // No server-side params — Supabase may have sent tokens as URL fragment (#).
+  // Redirect to a client-side page that can read the hash fragment.
   return NextResponse.redirect(
-    new URL("/login?error=Lien invalide ou expiré", origin)
+    new URL("/auth/confirm", origin)
   );
 }
