@@ -59,7 +59,7 @@ export async function inviteTranslator(
         full_name: fullName,
         role: "translator",
       },
-      redirectTo: `${siteUrl}/auth/callback`,
+      redirectTo: `${siteUrl}/auth/confirm`,
     });
 
   if (createError) {
@@ -114,7 +114,7 @@ export async function resendInvitation(
         full_name: fullName,
         role: "translator",
       },
-      redirectTo: `${siteUrl}/auth/callback`,
+      redirectTo: `${siteUrl}/auth/confirm`,
     });
 
   if (inviteError) {
