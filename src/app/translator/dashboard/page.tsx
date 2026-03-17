@@ -97,30 +97,30 @@ export default async function TranslatorDashboard() {
         <div className="lg:col-span-2">
           {/* Mobile stats row */}
           <div className="mb-6 flex items-baseline gap-6 lg:hidden">
-            <div>
+            <Link href="/translator/testimonies" className="transition-opacity hover:opacity-70">
               <span className="text-2xl font-bold tabular-nums tracking-tight">
                 {totalAssignments}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
                 assignation{totalAssignments !== 1 ? "s" : ""}
               </span>
-            </div>
-            <div>
+            </Link>
+            <Link href="/translator/testimonies" className="transition-opacity hover:opacity-70">
               <span className="text-2xl font-bold tabular-nums tracking-tight">
                 {inProgressCount}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
                 en cours
               </span>
-            </div>
-            <div>
+            </Link>
+            <Link href="/translator/testimonies" className="transition-opacity hover:opacity-70">
               <span className="text-2xl font-bold tabular-nums tracking-tight">
                 {translatedCount}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
                 terminée{translatedCount !== 1 ? "s" : ""}
               </span>
-            </div>
+            </Link>
           </div>
 
           {/* Section title */}
@@ -234,30 +234,30 @@ export default async function TranslatorDashboard() {
         <aside className="hidden border-l-2 border-primary pl-6 lg:block">
           {/* Stat blocks */}
           <div className="space-y-4">
-            <div>
+            <Link href="/translator/testimonies" className="block transition-opacity hover:opacity-70">
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {totalAssignments}
               </p>
               <p className="text-xs text-muted-foreground">
                 Assignation{totalAssignments !== 1 ? "s" : ""}
               </p>
-            </div>
+            </Link>
             <div className="border-b border-border" />
-            <div>
+            <Link href="/translator/testimonies" className="block transition-opacity hover:opacity-70">
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {inProgressCount}
               </p>
               <p className="text-xs text-muted-foreground">En cours</p>
-            </div>
+            </Link>
             <div className="border-b border-border" />
-            <div>
+            <Link href="/translator/testimonies" className="block transition-opacity hover:opacity-70">
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {translatedCount}
               </p>
               <p className="text-xs text-muted-foreground">
                 Terminée{translatedCount !== 1 ? "s" : ""}
               </p>
-            </div>
+            </Link>
           </div>
 
           {/* Plannings section */}

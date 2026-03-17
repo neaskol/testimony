@@ -104,30 +104,30 @@ export default async function AdminDashboard() {
         <div className="lg:col-span-2">
           {/* Mobile stats row */}
           <div className="mb-6 flex items-baseline gap-6 lg:hidden">
-            <div>
+            <Link href="/admin/testimonies" className="transition-opacity hover:opacity-70">
               <span className="text-2xl font-bold tabular-nums tracking-tight">
                 {totalTestimonies}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
                 témoignage{totalTestimonies !== 1 ? "s" : ""}
               </span>
-            </div>
-            <div>
+            </Link>
+            <Link href="/admin/testimonies?status=in_translation" className="transition-opacity hover:opacity-70">
               <span className="text-2xl font-bold tabular-nums tracking-tight">
                 {inTranslation}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
                 en traduction
               </span>
-            </div>
-            <div>
+            </Link>
+            <Link href="/admin/plans" className="transition-opacity hover:opacity-70">
               <span className="text-2xl font-bold tabular-nums tracking-tight">
                 {planned}
               </span>
               <span className="ml-1.5 text-xs text-muted-foreground">
                 planifié{planned !== 1 ? "s" : ""}
               </span>
-            </div>
+            </Link>
           </div>
 
           {/* Section title */}
@@ -179,30 +179,30 @@ export default async function AdminDashboard() {
         {/* ── Sidebar (1/3, desktop only) ── */}
         <aside className="hidden border-l-2 border-primary pl-6 lg:block">
           <div className="space-y-4">
-            <div>
+            <Link href="/admin/testimonies" className="block transition-opacity hover:opacity-70">
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {totalTestimonies}
               </p>
               <p className="text-xs text-muted-foreground">
                 Témoignage{totalTestimonies !== 1 ? "s" : ""}
               </p>
-            </div>
+            </Link>
             <div className="border-b border-border" />
-            <div>
+            <Link href="/admin/testimonies?status=in_translation" className="block transition-opacity hover:opacity-70">
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {inTranslation}
               </p>
               <p className="text-xs text-muted-foreground">En traduction</p>
-            </div>
+            </Link>
             <div className="border-b border-border" />
-            <div>
+            <Link href="/admin/plans" className="block transition-opacity hover:opacity-70">
               <p className="text-2xl font-bold tabular-nums tracking-tight">
                 {planned}
               </p>
               <p className="text-xs text-muted-foreground">
                 Planifié{planned !== 1 ? "s" : ""}
               </p>
-            </div>
+            </Link>
             <div className="border-b border-border" />
             <div>
               <p className="text-2xl font-bold tabular-nums tracking-tight">
