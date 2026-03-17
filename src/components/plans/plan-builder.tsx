@@ -141,7 +141,7 @@ export function PlanBuilder({
             </SelectTrigger>
             <SelectContent>
               {services.map((service) => (
-                <SelectItem key={service.id} value={service.id}>
+                <SelectItem key={service.id} value={service.id} label={`${formatDate(service.service_date)} — ${service.title}`}>
                   {formatDate(service.service_date)} — {service.title}
                 </SelectItem>
               ))}
@@ -294,7 +294,7 @@ export function PlanBuilder({
                   </SelectTrigger>
                   <SelectContent>
                     {translators.map((translator) => (
-                      <SelectItem key={translator.id} value={translator.id}>
+                      <SelectItem key={translator.id} value={translator.id} label={`${translator.full_name} (${translator.email})`}>
                         {translator.full_name} ({translator.email})
                       </SelectItem>
                     ))}
@@ -311,8 +311,8 @@ export function PlanBuilder({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="mg">Malgache</SelectItem>
-                      <SelectItem value="fr">Francais</SelectItem>
+                      <SelectItem value="mg" label="Malgache">Malgache</SelectItem>
+                      <SelectItem value="fr" label="Francais">Francais</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

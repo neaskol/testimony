@@ -295,8 +295,8 @@ export function TestimonyForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="fr">Français</SelectItem>
-              <SelectItem value="mg">Malgache</SelectItem>
+              <SelectItem value="fr" label="Français">Français</SelectItem>
+              <SelectItem value="mg" label="Malgache">Malgache</SelectItem>
             </SelectContent>
           </Select>
           {isDetectingLanguage && (

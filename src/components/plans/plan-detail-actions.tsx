@@ -187,7 +187,7 @@ export function TranslatorAssignment({
               </SelectTrigger>
               <SelectContent>
                 {unassigned.map((translator) => (
-                  <SelectItem key={translator.id} value={translator.id}>
+                  <SelectItem key={translator.id} value={translator.id} label={translator.full_name}>
                     {translator.full_name}
                   </SelectItem>
                 ))}
@@ -200,8 +200,8 @@ export function TranslatorAssignment({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="mg">Malgache</SelectItem>
-                <SelectItem value="fr">Francais</SelectItem>
+                <SelectItem value="mg" label="Malgache">Malgache</SelectItem>
+                <SelectItem value="fr" label="Francais">Francais</SelectItem>
               </SelectContent>
             </Select>
           </div>

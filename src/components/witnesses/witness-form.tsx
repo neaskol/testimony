@@ -152,7 +152,7 @@ export function WitnessForm({ witness, action, onSuccess }: WitnessFormProps) {
             </SelectTrigger>
             <SelectContent>
               {LANGUAGE_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
+                <SelectItem key={opt.value} value={opt.value} label={opt.label}>
                   {opt.label}
                 </SelectItem>
               ))}
@@ -171,7 +171,7 @@ export function WitnessForm({ witness, action, onSuccess }: WitnessFormProps) {
             </SelectTrigger>
             <SelectContent>
               {COLOR_TAG_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
+                <SelectItem key={opt.value} value={opt.value} label={opt.label}>
                   <span className="inline-flex items-center gap-2">
                     {opt.value && (
                       <span

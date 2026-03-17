@@ -162,7 +162,7 @@ export function TestimonyFilters() {
           </SelectTrigger>
           <SelectContent>
             {STATUS_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
+              <SelectItem key={option.value} value={option.value} label={option.label}>
                 {option.label}
               </SelectItem>
             ))}
