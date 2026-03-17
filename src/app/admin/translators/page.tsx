@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
 import { getCurrentProfile, getMyTranslators } from "@/actions/auth";
 import { InviteTranslatorForm } from "@/components/translators/invite-form";
+import { ResendInviteButton } from "@/components/translators/resend-invite-button";
 import { Separator } from "@/components/ui/separator";
 import {
   Table,
@@ -74,6 +75,7 @@ export default async function TranslatorsPage() {
                   <TableHead>Email</TableHead>
                   <TableHead>Rôle</TableHead>
                   <TableHead>Inscrit le</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -92,6 +94,9 @@ export default async function TranslatorsPage() {
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {formatDate(translator.created_at)}
+                    </TableCell>
+                    <TableCell>
+                      <ResendInviteButton userId={translator.id} />
                     </TableCell>
                   </TableRow>
                 ))}

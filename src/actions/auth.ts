@@ -79,6 +79,61 @@ export async function inviteTranslator(
   return { data: { userId: authUser.user.id }, error: null };
 }
 
+export async function resendInvitation(
+  userId: string
+): Promise<ActionResult<null>> {
+  const profileResult = await requireRole(["superadmin", "admin"]);
+  if (profileResult.error) return { data: null, error: profileResult.error };
+
+  const admin = createAdminClient();
+  const currentProfile = profileResult.data!;
+
+  // Get the user to find their email and metadata
+  const { data: userData, error: getUserError } =
+    await admin.auth.admin.getUserById(userId);
+
+  if (getUserError || !userData.user) {
+    return { data: null, error: "Utilisateur introuvable" };
+  }
+
+  const email = userData.user.email!;
+  const fullName = userData.user.user_metadata?.full_name || "";
+
+  // Delete the existing auth user (profile will cascade-delete)
+  const { error: deleteError } = await admin.auth.admin.deleteUser(userId);
+  if (deleteError) {
+    return { data: null, error: deleteError.message };
+  }
+
+  // Re-invite with the correct redirect URL
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+  const { data: authUser, error: inviteError } =
+    await admin.auth.admin.inviteUserByEmail(email, {
+      data: {
+        full_name: fullName,
+        role: "translator",
+      },
+      redirectTo: `${siteUrl}/auth/callback`,
+    });
+
+  if (inviteError) {
+    return { data: null, error: inviteError.message };
+  }
+
+  // Re-link translator to the admin
+  const { error: updateError } = await admin
+    .from("profiles")
+    .update({ owned_by: currentProfile.id })
+    .eq("id", authUser.user.id);
+
+  if (updateError) {
+    return { data: null, error: updateError.message };
+  }
+
+  return { data: null, error: null };
+}
+
 export async function getMyTranslators(): Promise<ActionResult<Profile[]>> {
   const profileResult = await requireRole(["superadmin", "admin"]);
   if (profileResult.error) return { data: null, error: profileResult.error };
