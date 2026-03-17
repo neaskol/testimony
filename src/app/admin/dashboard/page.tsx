@@ -29,7 +29,8 @@ export default async function AdminDashboard() {
   const translated = testimonies.filter(
     (t) => t.status === "translated"
   ).length;
-  const planned = testimonies.filter((t) => t.status === "planned").length;
+  const plannedTestimonyIds = new Set(plans.flatMap((p) => p.testimony_ids));
+  const planned = plannedTestimonyIds.size;
 
   // First name
   const firstName = profile.full_name.split(" ")[0] || profile.full_name;
