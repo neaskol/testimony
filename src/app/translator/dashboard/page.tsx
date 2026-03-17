@@ -1,20 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 import { getCurrentProfile } from "@/actions/auth";
 import { getMyAssignments, getMyTranslationStats } from "@/actions/translations";
 import { getTranslatorPlans } from "@/actions/plans";
 import { StatusBadge } from "@/components/testimonies/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  FileText,
-  Languages,
-  CheckCircle,
-  ArrowRight,
-  User,
-  CalendarDays,
-} from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { formatDateShort, formatRelative } from "@/lib/utils";
 
 export default async function TranslatorDashboard() {
   const { data: profile, error } = await getCurrentProfile();
@@ -34,168 +25,281 @@ export default async function TranslatorDashboard() {
   const inProgressCount = stats?.inProgressCount ?? 0;
   const translatedCount = stats?.translatedCount ?? 0;
 
-  // Recent assignments (last 5)
-  const recentAssignments = allAssignments.slice(0, 5);
+  // Pending = assignments with no translation started yet
+  const pendingCount = totalAssignments - inProgressCount - translatedCount;
+
+  // First name extraction
+  const firstName = profile.full_name.split(" ")[0] || profile.full_name;
+
+  // Contextual message
+  let contextMessage: string;
+  if (pendingCount > 0) {
+    contextMessage =
+      pendingCount === 1
+        ? "1 t\u00e9moignage vous attend."
+        : `${pendingCount} t\u00e9moignages vous attendent.`;
+  } else if (inProgressCount > 0) {
+    contextMessage =
+      inProgressCount === 1
+        ? "1 traduction en cours."
+        : `${inProgressCount} traductions en cours.`;
+  } else {
+    contextMessage = "Tout est \u00e0 jour.";
+  }
+
+  // Next plan within 7 days
+  const today = new Date();
+  const sevenDaysFromNow = new Date(today);
+  sevenDaysFromNow.setDate(today.getDate() + 7);
+  const todayStr = today.toISOString().split("T")[0];
+  const sevenDaysStr = sevenDaysFromNow.toISOString().split("T")[0];
+
+  const upcomingPlan = allPlans
+    .filter(
+      (p) =>
+        p.service.service_date >= todayStr &&
+        p.service.service_date <= sevenDaysStr
+    )
+    .sort((a, b) =>
+      a.service.service_date.localeCompare(b.service.service_date)
+    )[0];
+
+  // Display items
+  const displayAssignments = allAssignments.slice(0, 7);
+  const hasMoreAssignments = allAssignments.length > 7;
+  const displayPlans = allPlans.slice(0, 4);
+  const hasMorePlans = allPlans.length > 4;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-serif text-2xl font-bold tracking-tight">
-          Tableau de bord
+    <div className="space-y-8">
+      {/* ── Hero Section ── */}
+      <header className="space-y-1 border-b border-border pb-6">
+        <h1 className="font-serif text-3xl font-bold tracking-tight">
+          Bonjour, {firstName}.
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Bienvenue, {profile.full_name}
-        </p>
-      </div>
-
-      {/* Stats cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <DashboardCard
-          title="Plannings"
-          value={String(allPlans.length)}
-          icon={<CalendarDays className="size-5 text-muted-foreground" />}
-        />
-        <DashboardCard
-          title="Assignations"
-          value={String(totalAssignments)}
-          icon={<FileText className="size-5 text-muted-foreground" />}
-        />
-        <DashboardCard
-          title="En cours de traduction"
-          value={String(inProgressCount)}
-          icon={<Languages className="size-5 text-warning" />}
-        />
-        <DashboardCard
-          title="Traductions terminées"
-          value={String(translatedCount)}
-          icon={<CheckCircle className="size-5 text-success" />}
-        />
-      </div>
-
-      {/* Recent assignments */}
-      <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <CardTitle className="font-serif">Assignations récentes</CardTitle>
-          {totalAssignments > 0 && (
-            <Link href="/translator/testimonies">
-              <Button variant="ghost" size="sm" className="gap-1">
-                Tout voir
-                <ArrowRight className="size-4" />
-              </Button>
+        <p className="text-base text-muted-foreground">{contextMessage}</p>
+        {upcomingPlan && (
+          <p className="text-sm">
+            Prochain planning :{" "}
+            <Link
+              href={`/translator/plans/${upcomingPlan.id}`}
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              {formatDateShort(upcomingPlan.service.service_date)}
             </Link>
-          )}
-        </CardHeader>
-        <CardContent>
-          {recentAssignments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8">
-              <FileText className="size-8 text-muted-foreground/50" />
-              <p className="mt-3 text-sm text-muted-foreground">
-                Aucune assignation pour le moment.
-              </p>
+          </p>
+        )}
+      </header>
+
+      {/* ── Two-Column Layout ── */}
+      <div className="lg:grid lg:grid-cols-3 lg:gap-12">
+        {/* ── Main Column (2/3) ── */}
+        <div className="lg:col-span-2">
+          {/* Mobile stats row */}
+          <div className="mb-6 flex items-baseline gap-6 lg:hidden">
+            <div>
+              <span className="text-2xl font-bold tabular-nums tracking-tight">
+                {totalAssignments}
+              </span>
+              <span className="ml-1.5 text-xs text-muted-foreground">
+                assignation{totalAssignments !== 1 ? "s" : ""}
+              </span>
             </div>
+            <div>
+              <span className="text-2xl font-bold tabular-nums tracking-tight">
+                {inProgressCount}
+              </span>
+              <span className="ml-1.5 text-xs text-muted-foreground">
+                en cours
+              </span>
+            </div>
+            <div>
+              <span className="text-2xl font-bold tabular-nums tracking-tight">
+                {translatedCount}
+              </span>
+              <span className="ml-1.5 text-xs text-muted-foreground">
+                termin\u00e9e{translatedCount !== 1 ? "s" : ""}
+              </span>
+            </div>
+          </div>
+
+          {/* Section title */}
+          <h2 className="font-serif text-lg font-semibold">\u00c0 traduire</h2>
+          <div className="mt-1 border-b border-border" />
+
+          {/* Article list */}
+          {displayAssignments.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Aucune assignation pour le moment.
+            </p>
           ) : (
-            <div className="space-y-3">
-              {recentAssignments.map((assignment) => {
+            <div className="divide-y divide-border">
+              {displayAssignments.map((assignment) => {
                 const testimony = assignment.testimony;
                 const witnessName =
-                  testimony.witness?.full_name ?? "Témoin anonyme";
-                const preview = testimony.content
-                  ? testimony.content.length > 120
-                    ? testimony.content.slice(0, 120) + "..."
-                    : testimony.content
-                  : "Pas de contenu textuel";
+                  testimony.witness?.full_name ?? "T\u00e9moin anonyme";
+
+                // Extract first sentence for the editorial extract
+                const rawContent = testimony.content ?? "";
+                let firstSentence = "";
+                if (rawContent) {
+                  const match = rawContent.match(/^[^.!?]+[.!?]/);
+                  firstSentence = match
+                    ? match[0].trim()
+                    : rawContent.length > 120
+                      ? rawContent.slice(0, 120).trim() + "\u2026"
+                      : rawContent.trim();
+                }
 
                 return (
                   <Link
                     key={assignment.id}
                     href={`/translator/testimonies/${testimony.id}`}
-                    className="flex items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/30"
+                    className="group flex items-start gap-4 py-4 transition-colors hover:bg-muted/30"
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <User className="size-3.5 shrink-0 text-muted-foreground" />
-                        <span className="text-sm font-medium">
-                          {witnessName}
-                        </span>
+                      <p className="text-sm font-semibold">{witnessName}</p>
+                      {firstSentence && (
+                        <p className="mt-0.5 line-clamp-2 text-sm italic text-muted-foreground">
+                          &laquo;&nbsp;{firstSentence}&nbsp;&raquo;
+                        </p>
+                      )}
+                      <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
                         <StatusBadge status={testimony.status} />
+                        <span>&middot;</span>
+                        <span>{formatRelative(assignment.assigned_at)}</span>
                       </div>
-                      <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
-                        {preview}
-                      </p>
                     </div>
-                    <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+                    <ArrowRight className="mt-1 size-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 );
               })}
             </div>
           )}
-        </CardContent>
-      </Card>
 
-      {/* Upcoming plans */}
-      <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <CardTitle className="font-serif">Plannings assignés</CardTitle>
-          {allPlans.length > 0 && (
-            <Link href="/translator/plans">
-              <Button variant="ghost" size="sm" className="gap-1">
+          {hasMoreAssignments && (
+            <div className="mt-3">
+              <Link
+                href="/translator/testimonies"
+                className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+              >
                 Tout voir
-                <ArrowRight className="size-4" />
-              </Button>
-            </Link>
+                <ArrowRight className="size-3.5" />
+              </Link>
+            </div>
           )}
-        </CardHeader>
-        <CardContent>
-          {allPlans.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8">
-              <CalendarDays className="size-8 text-muted-foreground/50" />
-              <p className="mt-3 text-sm text-muted-foreground">
-                Aucun planning assigné pour le moment.
+
+          {/* Mobile plannings section */}
+          {allPlans.length > 0 && (
+            <div className="mt-8 lg:hidden">
+              <h2 className="font-serif text-lg font-semibold">Plannings</h2>
+              <div className="mt-1 border-b border-border" />
+              <div className="divide-y divide-border">
+                {displayPlans.map((plan) => (
+                  <Link
+                    key={plan.id}
+                    href={`/translator/plans/${plan.id}`}
+                    className="group flex items-center justify-between py-3 transition-colors hover:bg-muted/30"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">
+                        {plan.service.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDateShort(plan.service.service_date)} &mdash;{" "}
+                        {plan.testimony_ids.length} t\u00e9moignage
+                        {plan.testimony_ids.length !== 1 ? "s" : ""}
+                      </p>
+                    </div>
+                    <ArrowRight className="size-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                ))}
+              </div>
+              {hasMorePlans && (
+                <div className="mt-3">
+                  <Link
+                    href="/translator/plans"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    Tout voir
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ── Sidebar (1/3, desktop only) ── */}
+        <aside className="hidden border-l-2 border-primary pl-6 lg:block">
+          {/* Stat blocks */}
+          <div className="space-y-4">
+            <div>
+              <p className="text-2xl font-bold tabular-nums tracking-tight">
+                {totalAssignments}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Assignation{totalAssignments !== 1 ? "s" : ""}
               </p>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {allPlans.slice(0, 5).map((plan) => (
-                <Link
-                  key={plan.id}
-                  href={`/translator/plans/${plan.id}`}
-                  className="flex items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/30"
-                >
-                  <div className="min-w-0 flex-1">
+            <div className="border-b border-border" />
+            <div>
+              <p className="text-2xl font-bold tabular-nums tracking-tight">
+                {inProgressCount}
+              </p>
+              <p className="text-xs text-muted-foreground">En cours</p>
+            </div>
+            <div className="border-b border-border" />
+            <div>
+              <p className="text-2xl font-bold tabular-nums tracking-tight">
+                {translatedCount}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Termin\u00e9e{translatedCount !== 1 ? "s" : ""}
+              </p>
+            </div>
+          </div>
+
+          {/* Plannings section */}
+          {allPlans.length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-serif text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Plannings
+              </h3>
+              <div className="mt-2 border-b border-border" />
+              <div className="divide-y divide-border">
+                {displayPlans.map((plan) => (
+                  <Link
+                    key={plan.id}
+                    href={`/translator/plans/${plan.id}`}
+                    className="block py-3 transition-colors hover:bg-muted/30"
+                  >
                     <p className="text-sm font-medium">
                       {plan.service.title}
                     </p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {formatDate(plan.service.service_date)} — {plan.testimony_ids.length} témoignage{plan.testimony_ids.length !== 1 ? "s" : ""}
+                      {formatDateShort(plan.service.service_date)} &mdash;{" "}
+                      {plan.testimony_ids.length} t\u00e9moignage
+                      {plan.testimony_ids.length !== 1 ? "s" : ""}
                     </p>
-                  </div>
-                  <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
-                </Link>
-              ))}
+                  </Link>
+                ))}
+              </div>
+              {hasMorePlans && (
+                <div className="mt-3">
+                  <Link
+                    href="/translator/plans"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    Tout voir
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                </div>
+              )}
             </div>
           )}
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-function DashboardCard({
-  title,
-  value,
-  icon,
-}: {
-  title: string;
-  value: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-lg border border-border bg-card p-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        {icon}
+        </aside>
       </div>
-      <p className="mt-2 text-3xl font-bold tabular-nums tracking-tight">{value}</p>
     </div>
   );
 }
